@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,6 +10,7 @@ import {
   IconBook2,
 } from "@tabler/icons-react";
 import { DiscoverQuiz } from "../constants/discover.select";
+import { useRouter } from "next/navigation";
 
 type QuizCardProps = {
   quiz: DiscoverQuiz;
@@ -53,10 +53,11 @@ function getDifficultyStyle(difficulty: string) {
 
 export function QuizCard({ quiz }: QuizCardProps) {
   const duration = formatDuration(quiz.estimatedDurationSeconds);
+  const router = useRouter();
 
   return (
     <Link
-    href={`/discover/${quiz.slug ?? quiz.id}`}
+      href={`/discover/${quiz.slug ?? quiz.id}`}
       className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/[0.06]"
     >
       {/* Thumbnail */}
@@ -71,11 +72,7 @@ export function QuizCard({ quiz }: QuizCardProps) {
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/15 via-muted to-primary/5">
-            <IconRosette
-              size={48}
-              stroke={1.2}
-              className="text-primary/30"
-            />
+            <IconRosette size={48} stroke={1.2} className="text-primary/30" />
           </div>
         )}
 
@@ -142,11 +139,7 @@ export function QuizCard({ quiz }: QuizCardProps) {
         {/* Engagement stats */}
         <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <IconPlayerPlay
-              size={16}
-              className="text-blue-500"
-              stroke={1.9}
-            />
+            <IconPlayerPlay size={16} className="text-blue-500" stroke={1.9} />
             <span className="font-semibold text-foreground">
               {numberFormatter.format(quiz.playCount)}
             </span>
@@ -154,11 +147,7 @@ export function QuizCard({ quiz }: QuizCardProps) {
           </span>
 
           <span className="flex items-center gap-1.5">
-            <IconTrophy
-              size={16}
-              className="text-amber-500"
-              stroke={1.9}
-            />
+            <IconTrophy size={16} className="text-amber-500" stroke={1.9} />
             <span className="font-semibold text-foreground">
               {numberFormatter.format(quiz.completionCount)}
             </span>
@@ -167,44 +156,44 @@ export function QuizCard({ quiz }: QuizCardProps) {
         </div>
 
         {/* Creator */}
-    
-{/* Creator */}
-<div className="mt-auto pt-4">
-  <div className="flex items-center gap-2.5 rounded-xl bg-muted/50 p-2.5 transition-colors group-hover:bg-muted/80">
-    <Link
-      href={`/users/${quiz.owner.id}`}
-      onClick={(e) => e.stopPropagation()}
-      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary"
-    >
-      {quiz.owner.image ? (
-        <Image
-          src={quiz.owner.image}
-          alt={quiz.owner.name ?? "Creator"}
-          width={32}
-          height={32}
-          className="size-8 shrink-0 rounded-full object-cover ring-2 ring-background"
-        />
-      ) : (
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary ring-2 ring-background">
-          {quiz.owner.name?.charAt(0).toUpperCase() ?? "?"}
+
+        {/* Creator */}
+        <div className="mt-auto pt-4">
+          <div className="flex items-center gap-2.5 rounded-xl bg-muted/50 p-2.5 transition-colors group-hover:bg-muted/80">
+            <div
+              onClick={() => router.push(`users/${quiz.owner.id}`)}
+              className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              {quiz.owner.image ? (
+                <Image
+                  src={quiz.owner.image}
+                  alt={quiz.owner.name ?? "Creator"}
+                  width={32}
+                  height={32}
+                  className="size-8 shrink-0 rounded-full object-cover ring-2 ring-background"
+                />
+              ) : (
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary ring-2 ring-background">
+                  {quiz.owner.name?.charAt(0).toUpperCase() ?? "?"}
+                </div>
+              )}
+
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-semibold text-foreground transition-colors hover:text-primary">
+                  {quiz.owner.name ?? "Unknown creator"}
+                </p>
+                <p className="text-[10px] text-muted-foreground">
+                  Quiz creator
+                </p>
+              </div>
+
+              <IconArrowUpRight
+                size={16}
+                className="shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+              />
+            </div>
+          </div>
         </div>
-      )}
-
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-semibold text-foreground transition-colors hover:text-primary">
-          {quiz.owner.name ?? "Unknown creator"}
-        </p>
-        <p className="text-[10px] text-muted-foreground">Quiz creator</p>
-      </div>
-
-      <IconArrowUpRight
-        size={16}
-        className="shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
-      />
-    </Link>
-  </div>
-</div>
-
       </div>
     </Link>
   );

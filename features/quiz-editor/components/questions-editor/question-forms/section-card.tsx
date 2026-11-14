@@ -52,7 +52,6 @@ export function SectionCard({
           "flex items-center justify-between gap-4 px-5 py-4 transition-colors",
           collapsible && "hover:bg-muted/40",
         )}
-        onClick={toggle}
       >
         <div className="min-w-0 flex-1">
           <div className="flex gap-2 items-center">
