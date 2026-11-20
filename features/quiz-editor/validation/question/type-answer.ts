@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { AcceptedAnswerSchema, BaseQuestionSchema } from "./base";
-import { MediaRatioSchema } from "../image";
 
 export const TypeAnswerDataSchema = z.object({
   answers: z

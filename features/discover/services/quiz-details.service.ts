@@ -1,79 +1,25 @@
 import prisma from "@/lib/db/prisma";
-
+import { AppErrors } from "@/lib/errors/app-errors";
+import { discoverQuizDetailedSelect } from "../constants/discover.select";
 export const quizDetailsService = {
   async getQuizDetails(quizId: string, userId?: string) {
     const quiz = await prisma.quiz.findUnique({
-      where: {
-        id: quizId,
-      },
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        description: true,
-        language: true,
-        category: true,
-        tags: true,
-        difficulty: true,
-        estimatedDurationSeconds: true,
-        visibility: true,
-
-        questionCount: true,
-        totalPoints: true,
-
-        playCount: true,
-        viewCount: true,
-        completionCount: true,
-        likeCount: true,
-
-        isFeatured: true,
-        publishedAt: true,
-        createdAt: true,
-        updatedAt: true,
-
-        thumbnail: {
-          select: {
-            id: true,
-            url: true,
-            alt: true,
-          },
-        },
-
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
-
-        questions: {
-          orderBy: {
-            order: "asc",
-          },
-          select: {
-            id: true,
-            type: true,
-            title: true,
-            image: true,
-            points: true,
-            timeLimitSeconds: true,
-            order: true,
-          },
-        },
-      },
+      where: { id: quizId },
+      select: discoverQuizDetailedSelect,
     });
 
-    if (!quiz) return null;
+if (!quiz) {
+  throw AppErrors.notFound("Quiz not found");
+}
+    const isOwner = userId === quiz.owner.id;
 
-    const isOwner = !!userId && quiz.owner.id === userId;
-
-    if (!isOwner && quiz.visibility !== "PUBLIC") {
-      return null;
+     if (quiz.visibility !== "PUBLIC" && !isOwner) {
+      throw AppErrors.forbidden("You don't have permission to access this quiz");
     }
 
+
     return {
-      ...quiz,
+      quiz,
       isOwner,
     };
   },

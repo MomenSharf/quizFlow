@@ -4,7 +4,6 @@ import {
   AcceptedAnswerSchema,
   BaseQuestionSchema,
 } from "./base";
-import { MediaRatioSchema } from "../image";
 
 export const FillBlankBlockSchema = z.discriminatedUnion("type", [
   z.object({

@@ -1,14 +1,15 @@
+
 "use client";
 
 import { useMemo } from "react";
 import { IconBook2 } from "@tabler/icons-react";
 
 import { CollectionPage } from "@/components/collection/collection-page";
+import { mapQuizToCollectionItem } from "@/lib/mappers/collection.mapper";
+import type { QuizLibraryItem } from "@/lib/services/quiz-service";
+
 import { QuizGrid } from "./quiz-grid";
 import { QuizTable } from "./quiz-table";
-
-import type { QuizLibraryItem } from "@/lib/services/quiz-service";
-import { mapQuizToCollectionItem } from "@/lib/mappers/collection.mapper";
 
 type LibraryPageProps = {
   quizzes: QuizLibraryItem[];
@@ -34,16 +35,15 @@ function getFilteredQuizzes(
 
   return quizzes
     .filter((quiz) => {
-      switch (activeTab) {
-        case "created":
-          return quiz.publishedAt !== null;
-
-        case "drafts":
-          return quiz.publishedAt === null;
-
-        default:
-          return true;
+      if (activeTab === "published") {
+        return quiz.visibility === "PUBLIC";
       }
+
+      if (activeTab === "drafts") {
+        return quiz.visibility === "PRIVATE";
+      }
+
+      return true;
     })
     .filter((quiz) => {
       if (!normalizedSearch) return true;
@@ -97,9 +97,9 @@ function LibraryEmptyState({
           description: "Quizzes you're still working on will appear here.",
         }
       : {
-          title: "No quizzes yet",
+          title: "No published quizzes yet",
           description:
-            "Start creating quizzes and they will appear in your library.",
+            "Publish your quizzes and they will appear here.",
         };
 
   return (
@@ -121,14 +121,14 @@ export function LibraryPage({ quizzes }: LibraryPageProps) {
   const tabs = useMemo(
     () => [
       {
-        value: "created",
-        label: "Created",
-        count: quizzes.filter((quiz) => quiz.publishedAt !== null).length,
-      },
-      {
         value: "drafts",
         label: "Drafts",
-        count: quizzes.filter((quiz) => quiz.publishedAt === null).length,
+        count: quizzes.filter((quiz) => quiz.visibility === "PRIVATE").length,
+      },
+      {
+        value: "published",
+        label: "Published",
+        count: quizzes.filter((quiz) => quiz.visibility === "PUBLIC").length,
       },
     ],
     [quizzes],
@@ -139,7 +139,7 @@ export function LibraryPage({ quizzes }: LibraryPageProps) {
       title="Quiz Library"
       tabs={tabs}
       sortOptions={sortOptions}
-      defaultTab="created"
+      defaultTab="drefts"
       defaultSort="updated"
       defaultView="grid"
       showCreateButton
@@ -152,7 +152,12 @@ export function LibraryPage({ quizzes }: LibraryPageProps) {
         });
 
         if (filteredQuizzes.length === 0) {
-          return <LibraryEmptyState activeTab={activeTab} search={search} />;
+          return (
+            <LibraryEmptyState
+              activeTab={activeTab}
+              search={search}
+            />
+          );
         }
 
         const items = filteredQuizzes.map(mapQuizToCollectionItem);

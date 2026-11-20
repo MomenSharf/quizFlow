@@ -56,39 +56,44 @@ const authConfig = {
 
         if (!valid) return null;
 
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          image: user.image,
         };
       },
     }),
   ],
+callbacks: {
+  async jwt({ token, user }) {
+    if (user?.id) {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: {
+          id: true,
+          username: true,
+        },
+      });
 
-  callbacks: {
-    async jwt({ token, user }) {
-      if (!user) return token;
-
-      token.id = user.id;
-      token.name = user.name;
-      token.email = user.email;
-      token.picture = user.image;
-
-      return token;
-    },
-
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.name = token.name;
-        session.user.email = token.email as string;
-        session.user.image = token.picture as string;
+      if (dbUser) {
+        token.id = dbUser.id;
+        token.username = dbUser.username;
       }
+    }
 
-      return session;
-    },
+    return token;
   },
+
+  async session({ session, token }) {
+    if (session.user) {
+      session.user.id = token.id as string;
+      session.user.username = token.username as string;
+    }
+
+    return session;
+  },
+},
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

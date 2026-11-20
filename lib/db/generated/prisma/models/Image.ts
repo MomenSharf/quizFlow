@@ -201,6 +201,7 @@ export type ImageWhereInput = {
   questions?: Prisma.QuestionListRelationFilter
   quizzes?: Prisma.QuizListRelationFilter
   explanationQuestions?: Prisma.QuestionListRelationFilter
+  users?: Prisma.UserListRelationFilter
 }
 
 export type ImageOrderByWithRelationInput = {
@@ -214,14 +215,15 @@ export type ImageOrderByWithRelationInput = {
   questions?: Prisma.QuestionOrderByRelationAggregateInput
   quizzes?: Prisma.QuizOrderByRelationAggregateInput
   explanationQuestions?: Prisma.QuestionOrderByRelationAggregateInput
+  users?: Prisma.UserOrderByRelationAggregateInput
 }
 
 export type ImageWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  key?: string
   AND?: Prisma.ImageWhereInput | Prisma.ImageWhereInput[]
   OR?: Prisma.ImageWhereInput[]
   NOT?: Prisma.ImageWhereInput | Prisma.ImageWhereInput[]
-  key?: Prisma.StringFilter<"Image"> | string
   url?: Prisma.StringFilter<"Image"> | string
   caption?: Prisma.StringNullableFilter<"Image"> | string | null
   alt?: Prisma.StringFilter<"Image"> | string
@@ -230,7 +232,8 @@ export type ImageWhereUniqueInput = Prisma.AtLeast<{
   questions?: Prisma.QuestionListRelationFilter
   quizzes?: Prisma.QuizListRelationFilter
   explanationQuestions?: Prisma.QuestionListRelationFilter
-}, "id">
+  users?: Prisma.UserListRelationFilter
+}, "id" | "key">
 
 export type ImageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -269,6 +272,7 @@ export type ImageCreateInput = {
   questions?: Prisma.QuestionCreateNestedManyWithoutImageInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutThumbnailInput
   explanationQuestions?: Prisma.QuestionCreateNestedManyWithoutExplanationImageInput
+  users?: Prisma.UserCreateNestedManyWithoutImageInput
 }
 
 export type ImageUncheckedCreateInput = {
@@ -282,6 +286,7 @@ export type ImageUncheckedCreateInput = {
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutImageInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutThumbnailInput
   explanationQuestions?: Prisma.QuestionUncheckedCreateNestedManyWithoutExplanationImageInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutImageInput
 }
 
 export type ImageUpdateInput = {
@@ -295,6 +300,7 @@ export type ImageUpdateInput = {
   questions?: Prisma.QuestionUpdateManyWithoutImageNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutThumbnailNestedInput
   explanationQuestions?: Prisma.QuestionUpdateManyWithoutExplanationImageNestedInput
+  users?: Prisma.UserUpdateManyWithoutImageNestedInput
 }
 
 export type ImageUncheckedUpdateInput = {
@@ -308,6 +314,7 @@ export type ImageUncheckedUpdateInput = {
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutImageNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutThumbnailNestedInput
   explanationQuestions?: Prisma.QuestionUncheckedUpdateManyWithoutExplanationImageNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutImageNestedInput
 }
 
 export type ImageCreateManyInput = {
@@ -375,6 +382,22 @@ export type ImageMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type ImageCreateNestedOneWithoutUsersInput = {
+  create?: Prisma.XOR<Prisma.ImageCreateWithoutUsersInput, Prisma.ImageUncheckedCreateWithoutUsersInput>
+  connectOrCreate?: Prisma.ImageCreateOrConnectWithoutUsersInput
+  connect?: Prisma.ImageWhereUniqueInput
+}
+
+export type ImageUpdateOneWithoutUsersNestedInput = {
+  create?: Prisma.XOR<Prisma.ImageCreateWithoutUsersInput, Prisma.ImageUncheckedCreateWithoutUsersInput>
+  connectOrCreate?: Prisma.ImageCreateOrConnectWithoutUsersInput
+  upsert?: Prisma.ImageUpsertWithoutUsersInput
+  disconnect?: Prisma.ImageWhereInput | boolean
+  delete?: Prisma.ImageWhereInput | boolean
+  connect?: Prisma.ImageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ImageUpdateToOneWithWhereWithoutUsersInput, Prisma.ImageUpdateWithoutUsersInput>, Prisma.ImageUncheckedUpdateWithoutUsersInput>
+}
+
 export type ImageCreateNestedOneWithoutQuizzesInput = {
   create?: Prisma.XOR<Prisma.ImageCreateWithoutQuizzesInput, Prisma.ImageUncheckedCreateWithoutQuizzesInput>
   connectOrCreate?: Prisma.ImageCreateOrConnectWithoutQuizzesInput
@@ -423,6 +446,74 @@ export type ImageUpdateOneWithoutQuestionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ImageUpdateToOneWithWhereWithoutQuestionsInput, Prisma.ImageUpdateWithoutQuestionsInput>, Prisma.ImageUncheckedUpdateWithoutQuestionsInput>
 }
 
+export type ImageCreateWithoutUsersInput = {
+  id?: string
+  key: string
+  url: string
+  caption?: string | null
+  alt: string
+  ratio?: string
+  createdAt?: Date | string
+  questions?: Prisma.QuestionCreateNestedManyWithoutImageInput
+  quizzes?: Prisma.QuizCreateNestedManyWithoutThumbnailInput
+  explanationQuestions?: Prisma.QuestionCreateNestedManyWithoutExplanationImageInput
+}
+
+export type ImageUncheckedCreateWithoutUsersInput = {
+  id?: string
+  key: string
+  url: string
+  caption?: string | null
+  alt: string
+  ratio?: string
+  createdAt?: Date | string
+  questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutImageInput
+  quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutThumbnailInput
+  explanationQuestions?: Prisma.QuestionUncheckedCreateNestedManyWithoutExplanationImageInput
+}
+
+export type ImageCreateOrConnectWithoutUsersInput = {
+  where: Prisma.ImageWhereUniqueInput
+  create: Prisma.XOR<Prisma.ImageCreateWithoutUsersInput, Prisma.ImageUncheckedCreateWithoutUsersInput>
+}
+
+export type ImageUpsertWithoutUsersInput = {
+  update: Prisma.XOR<Prisma.ImageUpdateWithoutUsersInput, Prisma.ImageUncheckedUpdateWithoutUsersInput>
+  create: Prisma.XOR<Prisma.ImageCreateWithoutUsersInput, Prisma.ImageUncheckedCreateWithoutUsersInput>
+  where?: Prisma.ImageWhereInput
+}
+
+export type ImageUpdateToOneWithWhereWithoutUsersInput = {
+  where?: Prisma.ImageWhereInput
+  data: Prisma.XOR<Prisma.ImageUpdateWithoutUsersInput, Prisma.ImageUncheckedUpdateWithoutUsersInput>
+}
+
+export type ImageUpdateWithoutUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alt?: Prisma.StringFieldUpdateOperationsInput | string
+  ratio?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  questions?: Prisma.QuestionUpdateManyWithoutImageNestedInput
+  quizzes?: Prisma.QuizUpdateManyWithoutThumbnailNestedInput
+  explanationQuestions?: Prisma.QuestionUpdateManyWithoutExplanationImageNestedInput
+}
+
+export type ImageUncheckedUpdateWithoutUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alt?: Prisma.StringFieldUpdateOperationsInput | string
+  ratio?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  questions?: Prisma.QuestionUncheckedUpdateManyWithoutImageNestedInput
+  quizzes?: Prisma.QuizUncheckedUpdateManyWithoutThumbnailNestedInput
+  explanationQuestions?: Prisma.QuestionUncheckedUpdateManyWithoutExplanationImageNestedInput
+}
+
 export type ImageCreateWithoutQuizzesInput = {
   id?: string
   key: string
@@ -433,6 +524,7 @@ export type ImageCreateWithoutQuizzesInput = {
   createdAt?: Date | string
   questions?: Prisma.QuestionCreateNestedManyWithoutImageInput
   explanationQuestions?: Prisma.QuestionCreateNestedManyWithoutExplanationImageInput
+  users?: Prisma.UserCreateNestedManyWithoutImageInput
 }
 
 export type ImageUncheckedCreateWithoutQuizzesInput = {
@@ -445,6 +537,7 @@ export type ImageUncheckedCreateWithoutQuizzesInput = {
   createdAt?: Date | string
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutImageInput
   explanationQuestions?: Prisma.QuestionUncheckedCreateNestedManyWithoutExplanationImageInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutImageInput
 }
 
 export type ImageCreateOrConnectWithoutQuizzesInput = {
@@ -473,6 +566,7 @@ export type ImageUpdateWithoutQuizzesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuestionUpdateManyWithoutImageNestedInput
   explanationQuestions?: Prisma.QuestionUpdateManyWithoutExplanationImageNestedInput
+  users?: Prisma.UserUpdateManyWithoutImageNestedInput
 }
 
 export type ImageUncheckedUpdateWithoutQuizzesInput = {
@@ -485,6 +579,7 @@ export type ImageUncheckedUpdateWithoutQuizzesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutImageNestedInput
   explanationQuestions?: Prisma.QuestionUncheckedUpdateManyWithoutExplanationImageNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutImageNestedInput
 }
 
 export type ImageCreateWithoutExplanationQuestionsInput = {
@@ -497,6 +592,7 @@ export type ImageCreateWithoutExplanationQuestionsInput = {
   createdAt?: Date | string
   questions?: Prisma.QuestionCreateNestedManyWithoutImageInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutThumbnailInput
+  users?: Prisma.UserCreateNestedManyWithoutImageInput
 }
 
 export type ImageUncheckedCreateWithoutExplanationQuestionsInput = {
@@ -509,6 +605,7 @@ export type ImageUncheckedCreateWithoutExplanationQuestionsInput = {
   createdAt?: Date | string
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutImageInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutThumbnailInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutImageInput
 }
 
 export type ImageCreateOrConnectWithoutExplanationQuestionsInput = {
@@ -526,6 +623,7 @@ export type ImageCreateWithoutQuestionsInput = {
   createdAt?: Date | string
   quizzes?: Prisma.QuizCreateNestedManyWithoutThumbnailInput
   explanationQuestions?: Prisma.QuestionCreateNestedManyWithoutExplanationImageInput
+  users?: Prisma.UserCreateNestedManyWithoutImageInput
 }
 
 export type ImageUncheckedCreateWithoutQuestionsInput = {
@@ -538,6 +636,7 @@ export type ImageUncheckedCreateWithoutQuestionsInput = {
   createdAt?: Date | string
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutThumbnailInput
   explanationQuestions?: Prisma.QuestionUncheckedCreateNestedManyWithoutExplanationImageInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutImageInput
 }
 
 export type ImageCreateOrConnectWithoutQuestionsInput = {
@@ -566,6 +665,7 @@ export type ImageUpdateWithoutExplanationQuestionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuestionUpdateManyWithoutImageNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutThumbnailNestedInput
+  users?: Prisma.UserUpdateManyWithoutImageNestedInput
 }
 
 export type ImageUncheckedUpdateWithoutExplanationQuestionsInput = {
@@ -578,6 +678,7 @@ export type ImageUncheckedUpdateWithoutExplanationQuestionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutImageNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutThumbnailNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutImageNestedInput
 }
 
 export type ImageUpsertWithoutQuestionsInput = {
@@ -601,6 +702,7 @@ export type ImageUpdateWithoutQuestionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quizzes?: Prisma.QuizUpdateManyWithoutThumbnailNestedInput
   explanationQuestions?: Prisma.QuestionUpdateManyWithoutExplanationImageNestedInput
+  users?: Prisma.UserUpdateManyWithoutImageNestedInput
 }
 
 export type ImageUncheckedUpdateWithoutQuestionsInput = {
@@ -613,6 +715,7 @@ export type ImageUncheckedUpdateWithoutQuestionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutThumbnailNestedInput
   explanationQuestions?: Prisma.QuestionUncheckedUpdateManyWithoutExplanationImageNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutImageNestedInput
 }
 
 
@@ -624,12 +727,14 @@ export type ImageCountOutputType = {
   questions: number
   quizzes: number
   explanationQuestions: number
+  users: number
 }
 
 export type ImageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   questions?: boolean | ImageCountOutputTypeCountQuestionsArgs
   quizzes?: boolean | ImageCountOutputTypeCountQuizzesArgs
   explanationQuestions?: boolean | ImageCountOutputTypeCountExplanationQuestionsArgs
+  users?: boolean | ImageCountOutputTypeCountUsersArgs
 }
 
 /**
@@ -663,6 +768,13 @@ export type ImageCountOutputTypeCountExplanationQuestionsArgs<ExtArgs extends ru
   where?: Prisma.QuestionWhereInput
 }
 
+/**
+ * ImageCountOutputType without action
+ */
+export type ImageCountOutputTypeCountUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserWhereInput
+}
+
 
 export type ImageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -675,6 +787,7 @@ export type ImageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   questions?: boolean | Prisma.Image$questionsArgs<ExtArgs>
   quizzes?: boolean | Prisma.Image$quizzesArgs<ExtArgs>
   explanationQuestions?: boolean | Prisma.Image$explanationQuestionsArgs<ExtArgs>
+  users?: boolean | Prisma.Image$usersArgs<ExtArgs>
   _count?: boolean | Prisma.ImageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["image"]>
 
@@ -713,6 +826,7 @@ export type ImageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   questions?: boolean | Prisma.Image$questionsArgs<ExtArgs>
   quizzes?: boolean | Prisma.Image$quizzesArgs<ExtArgs>
   explanationQuestions?: boolean | Prisma.Image$explanationQuestionsArgs<ExtArgs>
+  users?: boolean | Prisma.Image$usersArgs<ExtArgs>
   _count?: boolean | Prisma.ImageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ImageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -724,6 +838,7 @@ export type $ImagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     questions: Prisma.$QuestionPayload<ExtArgs>[]
     quizzes: Prisma.$QuizPayload<ExtArgs>[]
     explanationQuestions: Prisma.$QuestionPayload<ExtArgs>[]
+    users: Prisma.$UserPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1130,6 +1245,7 @@ export interface Prisma__ImageClient<T, Null = never, ExtArgs extends runtime.Ty
   questions<T extends Prisma.Image$questionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Image$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   quizzes<T extends Prisma.Image$quizzesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Image$quizzesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuizPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   explanationQuestions<T extends Prisma.Image$explanationQuestionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Image$explanationQuestionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  users<T extends Prisma.Image$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Image$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1628,6 +1744,30 @@ export type Image$explanationQuestionsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.QuestionScalarFieldEnum | Prisma.QuestionScalarFieldEnum[]
+}
+
+/**
+ * Image.users
+ */
+export type Image$usersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+  orderBy?: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[]
+  cursor?: Prisma.UserWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
 }
 
 /**

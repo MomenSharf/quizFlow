@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -12,6 +11,7 @@ import {
   IconEye,
   IconHeart,
   IconStar,
+  TablerIcon,
 } from "@tabler/icons-react";
 
 import { useSlider } from "@/hooks/use-slider";
@@ -21,63 +21,71 @@ import { Button } from "@/components/ui/button";
 import { QuizCard } from "./quiz-card";
 import { DiscoverQuiz } from "../constants/discover.select";
 import { useRouter } from "next/navigation";
+import { DiscoverSort } from "../types/discover.types";
 
-const DISCOVER_ICONS = {
-  popular: IconFlame,
-  trending: IconTrendingUp,
-  completed: IconTrophy,
-  viewed: IconEye,
-  liked: IconHeart,
-  featured: IconStar,
-} as const;
+const DISCOVER_ICONS: Record<DiscoverSort, TablerIcon> = {
+  POPULAR: IconFlame,
+  TRENDING: IconTrendingUp,
+  MOST_COMPLETED: IconTrophy,
+  MOST_VIEWED: IconEye,
+  MOST_LIKED: IconHeart,
+  FEATURED: IconStar,
+};
 
-const DISCOVER_COLORS = {
-  popular: {
+const DISCOVER_COLORS: Record<
+  DiscoverSort,
+  {
+    color: string;
+    background: string;
+    decoration: string;
+  }
+> = {
+  POPULAR: {
     color: "text-orange-500",
     background: "bg-orange-500/10",
     decoration: "bg-orange-500/[0.06]",
   },
-  trending: {
+  TRENDING: {
     color: "text-rose-500",
     background: "bg-rose-500/10",
     decoration: "bg-rose-500/[0.06]",
   },
-  completed: {
+  MOST_COMPLETED: {
     color: "text-emerald-500",
     background: "bg-emerald-500/10",
     decoration: "bg-emerald-500/[0.06]",
   },
-  viewed: {
+  MOST_VIEWED: {
     color: "text-sky-500",
     background: "bg-sky-500/10",
     decoration: "bg-sky-500/[0.06]",
   },
-  liked: {
+  MOST_LIKED: {
     color: "text-pink-500",
     background: "bg-pink-500/10",
     decoration: "bg-pink-500/[0.06]",
   },
-  featured: {
+  FEATURED: {
     color: "text-violet-500",
     background: "bg-violet-500/10",
     decoration: "bg-violet-500/[0.06]",
   },
-} as const;
+};
 
 type DiscoverQuizSliderProps = {
+  sort: DiscoverSort;
   title: string;
   description: string;
   href: string;
   quizzes: DiscoverQuiz[];
-  icon: keyof typeof DISCOVER_ICONS;
 };
 
 export function DiscoverQuizSlider({
+  sort,
   title,
   description,
   href,
   quizzes,
-  icon,
 }: DiscoverQuizSliderProps) {
   const {
     ref,
@@ -90,26 +98,25 @@ export function DiscoverQuizSlider({
 
   const hasOverflow = overflow !== "none";
 
-  const router = useRouter()
+  const router = useRouter();
   if (!quizzes.length) return null;
 
-  const Icon = DISCOVER_ICONS[icon];
-  const colors = DISCOVER_COLORS[icon];
+  const Icon = DISCOVER_ICONS[sort];
+  const colors = DISCOVER_COLORS[sort];
 
   return (
     <section className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:gap-4">
-      {/* Section card */}
-    <button
-  type="button"
-  onClick={() => router.push(href)}
-  className={cn(
-    "group relative flex min-h-40 w-full shrink-0 flex-col justify-between",
-    "overflow-hidden rounded-2xl border border-border/70 bg-card p-5 text-left",
-    "transition-all duration-300 hover:-translate-y-0.5 hover:border-border hover:shadow-lg hover:shadow-black/[0.04]",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-    "sm:min-h-[270px] sm:w-[190px] sm:p-5 lg:w-[215px]",
-  )}
->
+      <button
+        type="button"
+        onClick={() => router.push(href)}
+        className={cn(
+          "group relative flex min-h-40 w-full shrink-0 flex-col justify-between",
+          "overflow-hidden rounded-2xl border border-border/70 bg-card p-5 text-left",
+          "transition-all duration-300 hover:-translate-y-0.5 hover:border-border hover:shadow-lg hover:shadow-black/[0.04]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+          "sm:min-h-[270px] sm:w-[190px] sm:p-5 lg:w-[215px]",
+        )}
+      >
         <div className="relative z-10 flex items-start justify-between">
           <div
             className={cn(
@@ -204,7 +211,7 @@ export function DiscoverQuizSlider({
           {quizzes.map((quiz) => (
             <div
               key={quiz.id}
-              className="w-[250px] shrink-0 sm:w-[260px] lg:w-[270px]"
+              className="w-65 shrink-0 lg:w-67.5"
             >
               <QuizCard quiz={quiz} />
             </div>

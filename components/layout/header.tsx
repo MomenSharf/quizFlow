@@ -21,7 +21,7 @@ const Header = async () => {
 
         {/* Search */}
         <div className="flex flex-1 items-center">
-          <QuizSearchInput className="hidden md:flex md:w-64 lg:w-80" />
+          <QuizSearchInput className="md:w-64 lg:w-80" />
         </div>
 
         {/* Actions */}

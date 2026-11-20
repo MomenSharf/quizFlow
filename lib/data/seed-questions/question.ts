@@ -1,0 +1,24 @@
+import { FILL_BLANK_QUESTIONS } from "./fill-blank";
+import { MATCH_QUESTIONS } from "./match";
+import { MULTIPLE_SELECT_QUESTIONS } from "./multiple-select";
+import { ORDERING_QUESTIONS } from "./ordering";
+import { SINGLE_SELECT_QUESTIONS } from "./single-select";
+import { TYPE_ANSWER_QUESTIONS } from "./type-answer";
+
+export const SEED_QUESTION_TYPES = [
+  "SINGLE_SELECT",
+  "MULTIPLE_SELECT",
+  "ORDERING",
+  "MATCH",
+  "TYPE_ANSWER",
+  "FILL_BLANK",
+] as const
+
+export const SEED_QUESIONS = {
+  SINGLE_SELECT: SINGLE_SELECT_QUESTIONS,
+  MULTIPLE_SELECT: MULTIPLE_SELECT_QUESTIONS,
+  ORDERING: ORDERING_QUESTIONS,
+  MATCH: MATCH_QUESTIONS,
+  TYPE_ANSWER: TYPE_ANSWER_QUESTIONS,
+  FILL_BLANK: FILL_BLANK_QUESTIONS,
+};

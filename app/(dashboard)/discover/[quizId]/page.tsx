@@ -1,8 +1,8 @@
+import { getQuizDetails } from "@/features/discover/actions/get-quiz-details";
 import { mockQuizDetails } from "@/features/discover/components/constants/quiz-details.mock";
 import { QuizDetailsCard } from "@/features/discover/quiz-details/quiz-details-card";
 import { QuizQuestionsSection } from "@/features/discover/quiz-details/quiz-questions-section";
-
-
+import { notFound } from "next/navigation";
 
 interface QuizDetailsPageProps {
   params: Promise<{
@@ -15,16 +15,21 @@ export default async function QuizDetailsPage({
 }: QuizDetailsPageProps) {
   const { quizId } = await params;
 
-  const quiz = mockQuizDetails;
+  const result = await getQuizDetails(quizId);
+
+  if (result.error) {
+    return notFound();
+  }
+  const { isOwner, quiz } = result.data;
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-6 sm:px-6 lg:py-10">
-      <QuizDetailsCard quiz={quiz} />
-
+      <QuizDetailsCard isOwner={isOwner} quiz={quiz} />
+      {/* 
       <QuizQuestionsSection
         questions={quiz.questions}
         totalPoints={quiz.totalPoints}
-      />
+      /> */}
     </main>
   );
 }

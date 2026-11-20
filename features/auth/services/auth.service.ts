@@ -33,13 +33,16 @@ export const authService = {
       );
     }
 
-    const user = await prisma.user.create({
-      data: {
-        email: normalizedEmail,
-        password: await hash(data.password, 10),
-        name: data.name,
-      },
-    });
+   const username = `${data.name.toLowerCase().replace(/\s+/g, "")}${Math.floor(1000 + Math.random() * 9000)}`;
+
+const user = await prisma.user.create({
+  data: {
+    email: normalizedEmail,
+    username,
+    password: await hash(data.password, 10),
+    name: data.name,
+  },
+});
 
     await this.sendVerificationCode(user.email);
 

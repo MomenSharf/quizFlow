@@ -1,4 +1,3 @@
-
 import { Prisma } from "@/lib/db/generated/prisma/client";
 
 import {
@@ -9,7 +8,6 @@ import {
 export type DiscoverSort =
   | "POPULAR"
   | "TRENDING"
-  | "NEWEST"
   | "MOST_COMPLETED"
   | "MOST_VIEWED"
   | "MOST_LIKED"

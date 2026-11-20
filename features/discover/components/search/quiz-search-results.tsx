@@ -1,4 +1,3 @@
-
 import { IconSearch } from "@tabler/icons-react";
 
 import type { DiscoverQuiz } from "@/features/discover/constants/discover.select";
@@ -6,15 +5,11 @@ import { QuizListCard } from "@/features/discover/components/quiz-list-card";
 
 type QuizSearchResultsProps = {
   quizzes: DiscoverQuiz[];
-  total: number;
   query?: string;
 };
 
-export function QuizSearchResults({
-  quizzes,
-  total,
-  query,
-}: QuizSearchResultsProps) {
+export function QuizSearchResults({ quizzes, query }: QuizSearchResultsProps) {
+  const total = quizzes.length;
   return (
     <section className="space-y-5">
       <div className="space-y-1">

@@ -12,20 +12,14 @@ export type QuizSearchFilters = {
   category: string;
   difficulty: string;
   language: string;
-  duration: string;
-  minQuestions: string;
-  maxQuestions: string;
-  creator: string;
+
 };
 
 const EMPTY_FILTERS: QuizSearchFilters = {
   category: "",
   difficulty: "",
   language: "",
-  duration: "",
-  minQuestions: "",
-  maxQuestions: "",
-  creator: "",
+
 };
 
 function readFilters(params: URLSearchParams): QuizSearchFilters {
@@ -33,10 +27,6 @@ function readFilters(params: URLSearchParams): QuizSearchFilters {
     category: params.get("category") ?? "",
     difficulty: params.get("difficulty") ?? "",
     language: params.get("language") ?? "",
-    duration: params.get("duration") ?? "",
-    minQuestions: params.get("minQuestions") ?? "",
-    maxQuestions: params.get("maxQuestions") ?? "",
-    creator: params.get("creator") ?? "",
   };
 }
 

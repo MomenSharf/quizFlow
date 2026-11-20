@@ -1,6 +1,5 @@
 import { DiscoverQuiz } from "../../constants/discover.select";
 
-
 export const MOCK_SEARCH_QUIZZES = [
   {
     id: "quiz-1",
@@ -23,8 +22,9 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-1",
       name: "Alex Morgan",
       image: "https://i.pravatar.cc/100?img=12",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-2",
@@ -47,8 +47,9 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-2",
       name: "Sarah Johnson",
       image: "https://i.pravatar.cc/100?img=47",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
 
   {
@@ -72,8 +73,9 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-3",
       name: "Daniel Smith",
       image: "https://i.pravatar.cc/100?img=11",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-4",
@@ -96,8 +98,10 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-4",
       name: "Emma Wilson",
       image: "https://i.pravatar.cc/100?img=44",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-5",
@@ -120,8 +124,9 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-5",
       name: "Omar Hassan",
       image: "https://i.pravatar.cc/100?img=68",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-6",
@@ -144,8 +149,9 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-6",
       name: "Michael Chen",
       image: "https://i.pravatar.cc/100?img=13",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-7",
@@ -168,8 +174,10 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-7",
       name: "Sophia Lee",
       image: "https://i.pravatar.cc/100?img=49",
+      username: 'Brown-123'
+
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-8",
@@ -192,8 +200,9 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-8",
       name: "James Wilson",
       image: "https://i.pravatar.cc/100?img=14",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-9",
@@ -216,8 +225,9 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-9",
       name: "Olivia Brown",
       image: "https://i.pravatar.cc/100?img=45",
+      username: "Brown-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
   {
     id: "quiz-10",
@@ -240,7 +250,8 @@ export const MOCK_SEARCH_QUIZZES = [
       id: "user-10",
       name: "Lucas Martin",
       image: "https://i.pravatar.cc/100?img=60",
+      username: "Martin-123",
     },
-    publishedAt: new Date("2026-10-15T10:00:00.000Z")
+    publishedAt: new Date("2026-10-15T10:00:00.000Z"),
   },
 ] satisfies DiscoverQuiz[];

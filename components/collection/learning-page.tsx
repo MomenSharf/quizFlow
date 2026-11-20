@@ -9,6 +9,7 @@ import { QuizTable } from "./quiz-table";
 import { mapAttemptToCollectionItem } from "@/lib/mappers/collection.mapper";
 import { QuizAttemptLibraryItem } from "@/lib/services/quiz-service";
 import { IconBook } from "@tabler/icons-react";
+import { SearchForm } from "../shared/search-form";
 
 type LearningPageProps = {
   attempts: QuizAttemptLibraryItem[];
@@ -122,6 +123,10 @@ function LearningEmptyState({
       <p className="mt-1 max-w-sm text-sm text-muted-foreground">
         {content.description}
       </p>
+
+      <div className="mt-4">
+        <SearchForm />
+      </div>
     </div>
   );
 }

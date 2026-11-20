@@ -1,11 +1,13 @@
 import { DiscoverQuiz } from "../../constants/discover.select";
+import { DiscoverSort } from "../../types/discover.types";
 
 export const mockQuizzes: DiscoverQuiz[] = [
   {
     id: "quiz-1",
     slug: "world-geography-challenge",
     title: "World Geography Challenge",
-    description: "Test your knowledge of countries, capitals, landmarks, and world geography.",
+    description:
+      "Test your knowledge of countries, capitals, landmarks, and world geography.",
     category: "Geography",
     language: "en",
     difficulty: "INTERMEDIATE",
@@ -22,13 +24,15 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-1",
       name: "Alex Morgan",
       image: "https://i.pravatar.cc/100?img=12",
+      username: "Morgan-123",
     },
   },
   {
     id: "quiz-2",
     slug: "human-body-quiz",
     title: "The Human Body",
-    description: "Explore the fascinating systems and organs that make our bodies work.",
+    description:
+      "Explore the fascinating systems and organs that make our bodies work.",
     category: "Science",
     language: "en",
     difficulty: "BEGINNER",
@@ -45,13 +49,15 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-2",
       name: "Sarah Wilson",
       image: "https://i.pravatar.cc/100?img=47",
+      username: "Morgan-123",
     },
   },
   {
     id: "quiz-3",
     slug: "world-history-quiz",
     title: "World History Through Time",
-    description: "Journey through ancient civilizations and major historical events.",
+    description:
+      "Journey through ancient civilizations and major historical events.",
     category: "History",
     language: "en",
     difficulty: "ADVANCED",
@@ -68,13 +74,15 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-3",
       name: "David Carter",
       image: "https://i.pravatar.cc/100?img=33",
+      username: "Morgan-123",
     },
   },
   {
     id: "quiz-4",
     slug: "programming-fundamentals",
     title: "Programming Fundamentals",
-    description: "Challenge yourself with essential programming and computer science concepts.",
+    description:
+      "Challenge yourself with essential programming and computer science concepts.",
     category: "Technology",
     language: "en",
     difficulty: "INTERMEDIATE",
@@ -91,13 +99,15 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-4",
       name: "James Anderson",
       image: "https://i.pravatar.cc/100?img=11",
+      username: "Morgan-123",
     },
   },
   {
     id: "quiz-5",
     slug: "space-and-astronomy",
     title: "Space & Astronomy Explorer",
-    description: "Discover planets, galaxies, black holes, and the mysteries of space.",
+    description:
+      "Discover planets, galaxies, black holes, and the mysteries of space.",
     category: "Science",
     language: "en",
     difficulty: "BEGINNER",
@@ -114,13 +124,15 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-5",
       name: "Emily Johnson",
       image: "https://i.pravatar.cc/100?img=44",
+      username: "Morgan-123",
     },
   },
   {
     id: "quiz-6",
     slug: "english-vocabulary-test",
     title: "English Vocabulary Mastery",
-    description: "Build your vocabulary with words, meanings, synonyms, and expressions.",
+    description:
+      "Build your vocabulary with words, meanings, synonyms, and expressions.",
     category: "Languages",
     language: "en",
     difficulty: "INTERMEDIATE",
@@ -137,13 +149,15 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-6",
       name: "Olivia Brown",
       image: "https://i.pravatar.cc/100?img=49",
+      username: "Morgan-123",
     },
   },
   {
     id: "quiz-7",
     slug: "mathematics-brain-challenge",
     title: "Mathematics Brain Challenge",
-    description: "Put your problem-solving skills to the test with numbers and logic.",
+    description:
+      "Put your problem-solving skills to the test with numbers and logic.",
     category: "Mathematics",
     language: "en",
     difficulty: "ADVANCED",
@@ -160,13 +174,15 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-7",
       name: "Daniel Smith",
       image: "https://i.pravatar.cc/100?img=15",
+      username: "Morgan-123",
     },
   },
   {
     id: "quiz-8",
     slug: "general-knowledge-mix",
     title: "Ultimate General Knowledge",
-    description: "A little bit of everything: science, history, culture, and more.",
+    description:
+      "A little bit of everything: science, history, culture, and more.",
     category: "General Knowledge",
     language: "en",
     difficulty: "INTERMEDIATE",
@@ -183,13 +199,12 @@ export const mockQuizzes: DiscoverQuiz[] = [
       id: "user-8",
       name: "Michael Davis",
       image: "https://i.pravatar.cc/100?img=13",
+      username: "Morgan-123",
     },
   },
 ];
 
-
-
-export const mockDiscoverCollections = {
+export const mockDiscoverCollections: Record<DiscoverSort, DiscoverQuiz[]> = {
   POPULAR: [...mockQuizzes].sort((a, b) => b.playCount - a.playCount),
   TRENDING: [...mockQuizzes].sort((a, b) => b.playCount - a.playCount),
   MOST_COMPLETED: [...mockQuizzes].sort(

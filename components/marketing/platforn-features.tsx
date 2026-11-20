@@ -1,6 +1,6 @@
+
 import { appConfig } from "@/lib/config/app";
 import {
-  Sparkles,
   PencilRuler,
   Gamepad2,
   ChartNoAxesCombined,
@@ -17,11 +17,10 @@ const features = [
     description:
       "Create engaging quizzes with different question types, custom content, and an easy-to-use editor.",
     icon: PencilRuler,
-    theme: "bg-violet-50 dark:bg-violet-950/30",
-    iconColor: "text-violet-600 dark:text-violet-400",
-    headingColor: "text-violet-950 dark:text-violet-100",
-    descriptionColor: "text-violet-800/75 dark:text-violet-200/70",
-    decoration: "bg-violet-300/20",
+    color: "text-violet-600 dark:text-violet-400",
+    background: "bg-violet-500/10 dark:bg-violet-400/10",
+    decoration: "bg-violet-500/10 dark:bg-violet-400/10",
+    border: "group-hover:border-violet-500/30",
   },
   {
     number: "02",
@@ -30,11 +29,10 @@ const features = [
     description:
       "Enjoy interactive questions, test your knowledge, and make every quiz a fun experience.",
     icon: Gamepad2,
-    theme: "bg-sky-50 dark:bg-sky-950/30",
-    iconColor: "text-sky-600 dark:text-sky-400",
-    headingColor: "text-sky-950 dark:text-sky-100",
-    descriptionColor: "text-sky-800/75 dark:text-sky-200/70",
-    decoration: "bg-sky-300/20",
+    color: "text-sky-600 dark:text-sky-400",
+    background: "bg-sky-500/10 dark:bg-sky-400/10",
+    decoration: "bg-sky-500/10 dark:bg-sky-400/10",
+    border: "group-hover:border-sky-500/30",
   },
   {
     number: "03",
@@ -43,11 +41,10 @@ const features = [
     description:
       "Review your results, learn from your mistakes, and celebrate every step forward.",
     icon: ChartNoAxesCombined,
-    theme: "bg-orange-50 dark:bg-orange-950/30",
-    iconColor: "text-orange-600 dark:text-orange-400",
-    headingColor: "text-orange-950 dark:text-orange-100",
-    descriptionColor: "text-orange-800/75 dark:text-orange-200/70",
-    decoration: "bg-orange-300/20",
+    color: "text-orange-600 dark:text-orange-400",
+    background: "bg-orange-500/10 dark:bg-orange-400/10",
+    decoration: "bg-orange-500/10 dark:bg-orange-400/10",
+    border: "group-hover:border-orange-500/30",
   },
   {
     number: "04",
@@ -56,11 +53,10 @@ const features = [
     description:
       "Explore quizzes across different topics, discover new interests, and share your creations.",
     icon: Compass,
-    theme: "bg-emerald-50 dark:bg-emerald-950/30",
-    iconColor: "text-emerald-600 dark:text-emerald-400",
-    headingColor: "text-emerald-950 dark:text-emerald-100",
-    descriptionColor: "text-emerald-800/75 dark:text-emerald-200/70",
-    decoration: "bg-emerald-300/20",
+    color: "text-emerald-600 dark:text-emerald-400",
+    background: "bg-emerald-500/10 dark:bg-emerald-400/10",
+    decoration: "bg-emerald-500/10 dark:bg-emerald-400/10",
+    border: "group-hover:border-emerald-500/30",
   },
 ];
 
@@ -81,45 +77,44 @@ export function PaltformFeatures() {
           return (
             <article
               key={feature.number}
-              className={`group relative isolate flex min-h-48 flex-col justify-between overflow-hidden rounded-2xl border border-transparent p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:min-h-52 sm:p-6 ${feature.theme}`}
+              className={`group relative isolate flex min-h-52 flex-col justify-between overflow-hidden rounded-2xl border border-border/60 bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/[0.03] dark:hover:shadow-black/20 sm:p-6 ${feature.border}`}
             >
+              {/* Decorative background */}
               <div
-                className={`pointer-events-none absolute -right-10 -top-10 -z-10 size-36 rounded-full blur-2xl transition-transform duration-500 group-hover:scale-125 ${feature.decoration}`}
+                className={`pointer-events-none absolute -right-12 -top-12 -z-10 size-40 rounded-full blur-3xl transition-transform duration-500 group-hover:scale-150 ${feature.decoration}`}
               />
 
               <div className="flex items-center justify-between">
                 <div
-                  className={`flex size-11 items-center justify-center rounded-xl bg-white/80 shadow-sm dark:bg-white/10 ${feature.iconColor}`}
+                  className={`flex size-11 items-center justify-center rounded-xl ${feature.background} ${feature.color}`}
                 >
-                  <Icon className="size-5" />
+                  <Icon className="size-5" strokeWidth={1.8} />
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold tracking-wider text-muted-foreground/70">
-                    {feature.number}
-                  </span>
-                </div>
+                <span className="text-xs font-semibold tabular-nums tracking-wider text-muted-foreground/60">
+                  {feature.number}
+                </span>
               </div>
 
               <div className="relative mt-8 max-w-md">
                 <p
-                  className={`mb-1.5 text-[11px] font-bold tracking-[0.16em] ${feature.iconColor}`}
+                  className={`mb-2 text-[11px] font-bold tracking-[0.16em] ${feature.color}`}
                 >
                   {feature.label}
                 </p>
 
-                <h3
-                  className={`text-lg font-bold tracking-tight sm:text-xl ${feature.headingColor}`}
-                >
+                <h3 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
                   {feature.title}
                 </h3>
 
-                <p
-                  className={`mt-2 text-sm leading-6 ${feature.descriptionColor}`}
-                >
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
                   {feature.description}
                 </p>
               </div>
+
+              <ArrowUpRight
+                className={`absolute bottom-6 right-6 size-4 opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-70 ${feature.color}`}
+              />
             </article>
           );
         })}

@@ -10,7 +10,7 @@ type MarketingPageProps = {
 
 export function MarketingPage({ isAuthenticated }: MarketingPageProps) {
   return (
-    <main className="relative min-h-screen overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
       {isAuthenticated ? (
         <HeroSection
           badge="Welcome back!"
@@ -52,15 +52,13 @@ export function MarketingPage({ isAuthenticated }: MarketingPageProps) {
         />
       )}
 
-      <div className="px-4 sm:px-6 lg:px-8">
-        <Reveal>
-          <PlatfromStats />
-        </Reveal>
+      <Reveal>
+        <PlatfromStats />
+      </Reveal>
 
-        <Reveal delay={0.1}>
-          <PaltformFeatures />
-        </Reveal>
-      </div>
+      <Reveal delay={0.1}>
+        <PaltformFeatures />
+      </Reveal>
 
       <Reveal delay={0.1} y={12}>
         <Footer />

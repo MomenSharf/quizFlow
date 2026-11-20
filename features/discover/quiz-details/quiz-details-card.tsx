@@ -23,35 +23,14 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { DiscoverQuizDetailed } from "../constants/discover.select";
 
-interface QuizDetailsCardProps {
-  quiz: {
-    id: string;
-    title: string;
-    description: string | null;
-    thumbnail: {
-      url: string;
-      alt?: string | null;
-    } | null;
-    category: string | null;
-    difficulty: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
-    language: string;
-    tags: string[];
-    questionCount: number;
-    totalPoints: number;
-    estimatedDurationSeconds: number | null;
-    playCount: number;
-    completionCount: number;
-    likeCount: number;
-    isFeatured: boolean;
-    isOwner: boolean;
-    owner: {
-      id: string;
-      name: string | null;
-      image: string | null;
-    };
-  };
+
+type QuizDetailsCardProps = {
+  isOwner: boolean,
+  quiz: DiscoverQuizDetailed
 }
+
 
 const difficultyStyles = {
   BEGINNER:
@@ -102,7 +81,7 @@ function Stat({
   );
 }
 
-export function QuizDetailsCard({ quiz }: QuizDetailsCardProps) {
+export function QuizDetailsCard({isOwner, quiz}: QuizDetailsCardProps) {
   const handleShare = async () => {
     const url = window.location.href;
 
@@ -212,7 +191,7 @@ export function QuizDetailsCard({ quiz }: QuizDetailsCardProps) {
               {quiz.totalPoints} points
             </Badge>
 
-            {quiz.isOwner && (
+            {isOwner && (
               <Badge variant="outline" className="gap-1 text-muted-foreground">
                 <IconCheck className="size-3.5" />
                 Your quiz
@@ -282,7 +261,7 @@ export function QuizDetailsCard({ quiz }: QuizDetailsCardProps) {
               <div className="relative size-10 shrink-0 overflow-hidden rounded-full bg-muted">
                 {quiz.owner.image ? (
                   <Image
-                    src={quiz.owner.image}
+                    src={quiz.owner.image.url}
                     alt={quiz.owner.name || "Quiz creator"}
                     fill
                     sizes="40px"
@@ -311,7 +290,7 @@ export function QuizDetailsCard({ quiz }: QuizDetailsCardProps) {
                 </Link>
               </Button>
 
-              {quiz.isOwner ? (
+              {isOwner ? (
                 <Button asChild variant="outline" size="icon">
                   <Link
                     href={`/quizzes/${quiz.id}/editor`}
@@ -340,7 +319,7 @@ export function QuizDetailsCard({ quiz }: QuizDetailsCardProps) {
                 <IconShare3 className="size-4" />
               </Button>
 
-              {!quiz.isOwner && (
+              {isOwner && (
                 <Button
                   variant="outline"
                   size="icon"

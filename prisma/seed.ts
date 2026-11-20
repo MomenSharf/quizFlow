@@ -1,541 +1,306 @@
-// import "dotenv/config";
-// import { PrismaPg } from "@prisma/adapter-pg";
-// import { Prisma, PrismaClient } from "../lib/db/generated/prisma/client";
-// import bcrypt from "bcrypt";
-// import { randomUUID } from "node:crypto";
-// import { Question } from "@/features/quiz-editor/validation/question";
+// prisma/seed.ts
+//
+// Seed order: Images -> Users -> Quizzes (spread randomly across users)
+//             -> Questions (random subset per quiz, matched by category + difficulty)
+//
+// Run with:  npx prisma db seed
+// Safe to re-run: images/users/quizzes are upserted, a quiz's questions are replaced.
 
-// const adapter = new PrismaPg({
-//   connectionString: process.env.DATABASE_URL!,
-// });
+import "dotenv/config";
+import bcrypt from "bcrypt";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-// const prisma = new PrismaClient({ adapter });
+// ── Adjust these paths if your folders are different ────────────────────────
+import { Prisma, PrismaClient } from "../lib/db/generated/prisma/client";
+import type {
+  QuestionType,
+  QuizDifficulty,
+} from "../lib/db/generated/prisma/enums";
+import { SEED_IMAGES } from "../lib/data/seed-images";
+import { SEED_USERS } from "../lib/data/seed-users";
+import { SEED_QUIZZES } from "../lib/data/seed-quizzes";
+import { SEED_QUESIONS } from "../lib/data/seed-questions/question";
+import { generateQuizMetrics } from "../lib/data/quiz-metrics";
+import prisma from "@/lib/db/prisma";
+// ────────────────────────────────────────────────────────────────────────────
 
-// const makeId = () => `c${randomUUID().replaceAll("-", "")}`;
+const CONFIG = {
+  // Same seed = same user/quiz/question picks on every run.
+  randomSeed: 20260101,
+  // Every user gets at least this many quizzes; the rest are distributed randomly.
+  minQuizzesPerUser: 2,
+  // Each quiz gets a random number of questions in this range (capped by what exists).
+  questionsPerQuiz: { min: 5, max: 7 },
+  // 1 = every question gets its category image, 0.5 = about half of them.
+  questionImageChance: 1,
+  bcryptRounds: 10,
+};
 
-// const image = (id: string) =>
-//   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=85`;
 
-// const options = (...texts: string[]) =>
-//   texts.map((text) => ({ id: makeId(), text, explanation: "" }));
+// ── Seeded random helpers ───────────────────────────────────────────────────
 
-// const accepted = (...values: string[]) =>
-//   values.map((value) => ({ id: makeId(), value }));
+function mulberry32(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
-// const base = {
-//   description: "",
-//   hint: "",
-//   required: true,
-//   media: {},
-// };
+const rand = mulberry32(CONFIG.randomSeed);
+const randInt = (min: number, max: number) =>
+  Math.floor(rand() * (max - min + 1)) + min;
 
-// const questions: Question[] = [
-//   {
-//     type: "SINGLE_SELECT",
-//     title: "Which planet is known as the Red Planet?",
-//     explanation: "Iron oxide on Mars gives its surface a reddish appearance.",
-//     points: 1,
-//     tags: ["astronomy", "science"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: (() => {
-//         const opts = options("Venus", "Mars", "Jupiter", "Mercury");
-//         return {
-//           options: opts,
-//           correctOptionId: opts[1].id,
-//         };
-//       })(),
-//     },
-//     config: {
-//       randomizeOptions: false,
-//       layout: "VERTICAL",
-//       showOptionLetters: true,
-//     },
-//   },
-//   {
-//     type: "MULTIPLE_SELECT",
-//     title: "Which of these are programming languages?",
-//     explanation: "TypeScript, Python, and Rust are programming languages. HTML is a markup language.",
-//     points: 2,
-//     tags: ["programming"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: (() => {
-//         const opts = options("TypeScript", "HTML", "Python", "Rust");
-//         return {
-//           options: opts,
-//           correctOptionIds: [opts[0].id, opts[2].id, opts[3].id],
-//         };
-//       })(),
-//     },
-//     config: {
-//       randomizeOptions: false,
-//       layout: "VERTICAL",
-//       showOptionLetters: true,
-//       minSelections: 0,
-//       maxSelections: 0,
-//       allowPartialCredit: true,
-//     },
-//   },
-//   {
-//     type: "TRUE_FALSE",
-//     title: "Water boils at 100°C at standard atmospheric pressure.",
-//     explanation: "At one atmosphere of pressure, pure water boils at approximately 100°C.",
-//     points: 1,
-//     tags: ["science"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: { correctAnswer: true },
-//     },
-//     config: {
-//       trueLabel: "True",
-//       falseLabel: "False",
-//       randomizeOrder: false,
-//     },
-//   },
-//   {
-//     type: "DROPDOWN",
-//     title: "The capital of Japan is ____.",
-//     explanation: "Tokyo is the capital of Japan.",
-//     points: 1,
-//     tags: ["geography"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: (() => {
-//         const opts = options("Kyoto", "Tokyo", "Osaka", "Nagoya");
-//         return {
-//           options: opts,
-//           correctOptionId: opts[1].id,
-//         };
-//       })(),
-//     },
-//     config: {
-//       placeholder: "Select a city",
-//       randomizeOptions: false,
-//       searchable: false,
-//       clearable: true,
-//       showOptionLetters: false,
-//     },
-//   },
-//   {
-//     type: "ORDERING",
-//     title: "Arrange these stages of a butterfly's life cycle.",
-//     explanation: "A butterfly develops from an egg into a larva, then a pupa, and finally an adult.",
-//     points: 2,
-//     tags: ["biology"],
-//     difficulty: "MEDIUM",
-//     content: {
-//       ...base,
-//       data: {
-//         items: [
-//           { id: makeId(), text: "Egg" },
-//           { id: makeId(), text: "Larva (caterpillar)" },
-//           { id: makeId(), text: "Pupa (chrysalis)" },
-//           { id: makeId(), text: "Adult butterfly" },
-//         ],
-//       },
-//     },
-//     config: {
-//       randomizeItems: true,
-//       layout: "VERTICAL",
-//       showNumbers: true,
-//       allowRetry: true,
-//     },
-//   },
-//   {
-//     type: "MATCH",
-//     title: "Match each technology with its primary use.",
-//     explanation: "HTML structures pages, CSS styles them, JavaScript adds behavior, and SQL queries relational databases.",
-//     points: 4,
-//     tags: ["web-development"],
-//     difficulty: "MEDIUM",
-//     content: {
-//       ...base,
-//       data: {
-//         pairs: [
-//           {
-//             id: makeId(),
-//             left: { text: "HTML" },
-//             right: { text: "Page structure" },
-//           },
-//           {
-//             id: makeId(),
-//             left: { text: "CSS" },
-//             right: { text: "Visual styling" },
-//           },
-//           {
-//             id: makeId(),
-//             left: { text: "JavaScript" },
-//             right: { text: "Interactive behavior" },
-//           },
-//           {
-//             id: makeId(),
-//             left: { text: "SQL" },
-//             right: { text: "Database queries" },
-//           },
-//         ],
-//       },
-//     },
-//     config: {
-//       randomizeLeft: false,
-//       randomizeRight: true,
-//       layout: "DRAG_DROP",
-//       showImages: false,
-//       allowRetry: true,
-//     },
-//   },
-//   {
-//     type: "TYPE_ANSWER",
-//     title: "What is the name of the language that adds interactivity to web pages?",
-//     explanation: "JavaScript is commonly used to add dynamic behavior to web pages.",
-//     points: 2,
-//     tags: ["web-development"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: {
-//         answers: accepted("JavaScript", "JS"),
-//         placeholder: "Type your answer...",
-//       },
-//     },
-//     config: {
-//       caseSensitive: false,
-//       trimWhitespace: true,
-//       ignoreExtraSpaces: true,
-//       acceptRegex: false,
-//       maxLength: 255,
-//       multiline: false,
-//       autoComplete: false,
-//     },
-//   },
-//   {
-//     type: "FILL_BLANK",
-//     title: "Complete this sentence: The Earth revolves around the ____.",
-//     explanation: "Earth orbits the Sun approximately once every 365.25 days.",
-//     points: 2,
-//     tags: ["astronomy"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: (() => {
-//         const blankId = makeId();
-//         return {
-//           blocks: [
-//             { id: makeId(), type: "TEXT", text: "The Earth revolves around the " },
-//             { id: makeId(), type: "BLANK", blankId },
-//             { id: makeId(), type: "TEXT", text: "." },
-//           ],
-//           blanks: [
-//             {
-//               id: blankId,
-//               answers: accepted("Sun", "sun"),
-//               placeholder: "Enter a celestial body",
-//             },
-//           ],
-//         };
-//       })(),
-//     },
-//     config: {
-//       caseSensitive: false,
-//       trimWhitespace: true,
-//       ignoreExtraSpaces: true,
-//       allowAnyOrder: false,
-//       autoResizeInputs: true,
-//     },
-//   },
-//   {
-//     type: "FLASHCARDS",
-//     title: "Review essential computer science concepts.",
-//     explanation: "Review each concept and recall its definition.",
-//     points: 1,
-//     tags: ["computer-science", "revision"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: {
-//         cards: [
-//           {
-//             id: makeId(),
-//             front: { title: "Algorithm", content: "What is an algorithm?" },
-//             back: { title: "Definition", content: "A finite sequence of steps for solving a problem." },
-//           },
-//           {
-//             id: makeId(),
-//             front: { title: "Variable", content: "What is a variable?" },
-//             back: { title: "Definition", content: "A named reference used to store or represent a value." },
-//           },
-//           {
-//             id: makeId(),
-//             front: { title: "Database", content: "What is a database?" },
-//             back: { title: "Definition", content: "An organized collection of data that can be accessed and managed." },
-//           },
-//           {
-//             id: makeId(),
-//             front: { title: "API", content: "What does an API do?" },
-//             back: { title: "Definition", content: "Defines how software systems communicate with one another." },
-//           },
-//         ],
-//       },
-//     },
-//     config: {
-//       shuffleCards: false,
-//       flipDirection: "HORIZONTAL",
-//       startSide: "FRONT",
-//       allowFlip: true,
-//       loopCards: false,
-//       showProgress: true,
-//       autoFlip: false,
-//       autoFlipDelay: 3000,
-//     },
-//   },
-//   {
-//     type: "RANGE",
-//     title: "Select the range containing the typical human resting heart rate in beats per minute.",
-//     explanation: "A commonly cited adult resting heart-rate range is 60–100 beats per minute, though individual needs vary.",
-//     points: 2,
-//     tags: ["biology", "health-science"],
-//     difficulty: "MEDIUM",
-//     content: {
-//       ...base,
-//       data: {
-//         min: 0,
-//         max: 200,
-//         step: 1,
-//         answer: { min: 60, max: 100 },
-//         unit: "bpm",
-//       },
-//     },
-//     config: {
-//       showTicks: true,
-//       showLabels: true,
-//       showCurrentValue: true,
-//       showMinMaxLabels: true,
-//       orientation: "HORIZONTAL",
-//       snapToStep: true,
-//     },
-//   },
-//   {
-//     type: "LOCATION",
-//     title: "Locate the Eiffel Tower on the map.",
-//     explanation: "The Eiffel Tower is in Paris, France.",
-//     points: 2,
-//     tags: ["geography", "landmarks"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: {
-//         answer: [
-//           {
-//             coordinate: { lat: 48.8584, lng: 2.2945 },
-//             radius: 100,
-//           },
-//         ],
-//         initialCenter: { lat: 48.8584, lng: 2.2945 },
-//         initialZoom: 12,
-//       },
-//     },
-//     config: {
-//       mapType: "ROADMAP",
-//       allowZoom: true,
-//       allowPan: true,
-//       showMarker: false,
-//       showRadius: false,
-//       showCoordinates: false,
-//       lockMapBounds: false,
-//     },
-//   },
-//   {
-//     type: "GUESS",
-//     title: "Identify the famous landmark shown in this image.",
-//     explanation: "The Great Pyramid of Giza is one of the most recognizable ancient monuments in Egypt.",
-//     points: 2,
-//     tags: ["history", "landmarks"],
-//     difficulty: "EASY",
-//     content: {
-//       ...base,
-//       data: {
-//         asset: {
-//           type: "IMAGE",
-//           url: image("photo-1503177119275-0aa32b3a9368"),
-//         },
-//         answers: accepted("Great Pyramid of Giza", "Pyramid of Giza", "Giza Pyramid"),
-//       },
-//     },
-//     config: {
-//       caseSensitive: false,
-//       trimWhitespace: true,
-//       ignoreExtraSpaces: true,
-//       revealAnswerAfterSubmit: true,
-//       maxAttempts: 0,
-//       showHint: true,
-//       zoomable: true,
-//     },
-//   },
-//   {
-//     type: "TAP_FIND",
-//     title: "Tap the marked target area in the image.",
-//     explanation: "This example uses normalized image coordinates, from 0 to 1, for target placement.",
-//     points: 2,
-//     tags: ["visual-reasoning"],
-//     difficulty: "MEDIUM",
-//     content: {
-//       ...base,
-//       data: {
-//         image: image("photo-1470770841072-f978cf4d019e"),
-//         targets: [
-//           {
-//             id: makeId(),
-//             label: "Target",
-//             shape: "CIRCLE",
-//             coordinates: [{ x: 0.5, y: 0.5 }],
-//           },
-//         ],
-//       },
-//     },
-//     config: {
-//       showHints: true,
-//       showTargetOutline: false,
-//       allowMultipleClicks: false,
-//       tolerance: 5,
-//       zoomable: true,
-//       revealTargetsAfterSubmit: true,
-//     },
-//   },
-// ];
+function shuffle<T>(items: readonly T[]): T[] {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
 
-// async function main() {
-//   const email = "momen@gmail.com";
-//   const password = await bcrypt.hash("gggggggg", 12);
+const toJson = (value: unknown) =>
+  JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 
-//   const user = await prisma.user.upsert({
-//     where: { email },
-//     update: {
-//       name: "Momen Developer",
-//       password,
-//     },
-//     create: {
-//       name: "Momen Developer",
-//       email,
-//       password,
-//       emailVerified: new Date(),
-//     },
-//   });
+// ── Question pool ───────────────────────────────────────────────────────────
 
-//   const title = "Quizora Development Playground";
+type SeedQuestion = {
+  title: string;
+  explanation?: string;
+  difficulty?: string;
+  points: number;
+  timeLimitSeconds: number;
+  content: unknown;
+};
 
-//   const info = {
-//     title,
-//     description:
-//       "A development quiz covering all Quizora question types, with realistic sample data for testing gameplay, answer evaluation, and result screens.",
-//     tags: ["development", "demo", "all-question-types"],
-//     language: "en",
-//     category: "Computer Science",
-//   };
+type PoolQuestion = SeedQuestion & {
+  type: QuestionType;
+  level: string;
+};
 
-//   const settings = {
-//     visibility: "PRIVATE",
-//     shuffleQuestions: false,
-//     shuffleOptions: false,
-//     showCorrectAnswers: true,
-//     showScore: true,
-//     showExplanations: true,
-//     allowRetry: true,
-//     saveProgress: true,
-//     requireAllQuestions: false,
-//     passingScore: 60,
-//     attempts: 0,
-//     timeLimit: 0,
-//   };
+/** All questions of every type that belong to a category. */
+function questionsForCategory(category: string): PoolQuestion[] {
+  const pool: PoolQuestion[] = [];
 
-//   const appearance = {
-//     theme: "SYSTEM",
-//     primaryColor: "#6366F1",
-//     backgroundColor: "#FFFFFF",
-//     textColor: "#111827",
-//     font: "Inter",
-//     borderRadius: 12,
-//     showProgressBar: true,
-//     showQuestionNumber: true,
-//   };
+  for (const [type, byCategory] of Object.entries(SEED_QUESIONS)) {
+    const list =
+      (byCategory as unknown as Record<string, SeedQuestion[]>)[category] ?? [];
 
-//   const totalPoints = questions.reduce((sum, question) => sum + question.points, 0);
+    for (const q of list) {
+      pool.push({
+        ...q,
+        type: type as QuestionType,
+        // SINGLE_SELECT has no difficulty field: 1 point = easy, 2 points = harder
+        level: q.difficulty ?? (q.points > 1 ? "ADVANCED" : "BEGINNER"),
+      });
+    }
+  }
 
-//   await prisma.$transaction(async (tx) => {
-//     const quiz = await tx.quiz.upsert({
-//       where: { id: "devquiz" },
-//       update: {
-//         title,
-//         description: info.description,
-//         ownerId: user.id,
-//         language: info.language,
-//         category: info.category,
-//         visibility: "PRIVATE",
-//         tags: info.tags,
-//         questionCount: questions.length,
-//         totalPoints,
-//         editorState: {
-//           info,
-//           settings,
-//           appearance,
-//         } as Prisma.InputJsonValue,
-//       },
-//       create: {
-//         id: "devquiz",
-//         slug: "devquiz",
-//         title,
-//         description: info.description,
-//         ownerId: user.id,
-//         language: info.language,
-//         category: info.category,
-//         visibility: "PRIVATE",
-//         tags: info.tags,
-//         questionCount: questions.length,
-//         totalPoints,
-//         editorState: {
-//           info,
-//           settings,
-//           appearance,
-//         } as Prisma.InputJsonValue,
-//       },
-//     });
+  return pool;
+}
 
-//     await tx.question.deleteMany({
-//       where: { quizId: quiz.id },
-//     });
+// ── Editor state ────────────────────────────────────────────────────────────
+// Quiz.editorState is a required Json column. Change this function to match
+// whatever shape your quiz editor expects.
 
-//     await tx.question.createMany({
-//       data: questions.map((question, index) => ({
-//         quizId: quiz.id,
-//         type: question.type,
-//         title: question.title,
-//         explanation: question.explanation,
-//         points: question.points,
-//         order: index,
-//         tags: question.tags,
-//         difficulty: question.difficulty,
-//         content: question.content as Prisma.InputJsonValue,
-//         config: question.config as Prisma.InputJsonValue,
-//       })) as Prisma.QuestionCreateManyInput[],
-//     });
-//   });
+function buildEditorState(
+  quiz: { title: string; description: string },
+  questions: PoolQuestion[],
+) {
+  return {
+    title: quiz.title,
+    description: quiz.description,
+    questions: questions.map((q, index) => ({
+      order: index + 1,
+      type: q.type,
+      title: q.title,
+      points: q.points,
+      timeLimitSeconds: q.timeLimitSeconds,
+      content: q.content,
+    })),
+  };
+}
 
-//   console.log("Development seed completed.");
-//   console.log(`User: ${email}`);
-//   console.log("Password: gggggggg");
-//   console.log("Quiz ID: devquiz");
-//   console.log(`Questions: ${questions.length}`);
-//   console.log(`Total points: ${totalPoints}`);
-// }
+// ── Seed steps ──────────────────────────────────────────────────────────────
 
-// main()
-//   .catch((error) => {
-//     console.error("Development seed failed:", error);
-//     process.exitCode = 1;
-//   })
-//   .finally(async () => {
-//     await prisma.$disconnect();
-//   });
+async function seedImages() {
+  const imageIds = new Map<string, string>();
+
+  for (const [key, img] of Object.entries(SEED_IMAGES)) {
+    const data = {
+      url: img.url,
+      caption: img.caption,
+      alt: img.alt,
+      ratio: img.ratio,
+    };
+
+    const row = await prisma.image.upsert({
+      where: { key },
+      update: data,
+      create: { key, ...data },
+    });
+
+    imageIds.set(key, row.id);
+  }
+
+  console.log(`Images:  ${imageIds.size}`);
+  return imageIds;
+}
+
+async function seedUsers(imageIds: Map<string, string>) {
+  const userIds: string[] = [];
+
+  for (const u of SEED_USERS) {
+    const imageId = imageIds.get(u.imageKey);
+    if (!imageId) {
+      throw new Error(`Image "${u.imageKey}" not found for user ${u.key}`);
+    }
+
+    // Only some seed users have a password in your data.
+    const password =
+      "password" in u ? await bcrypt.hash(u.password, CONFIG.bcryptRounds) : null;
+
+    const data = {
+      name: u.name,
+      username: u.username,
+      bio: u.bio,
+      imageId,
+      password,
+      emailVerified: u.createdAt,
+    };
+
+    const row = await prisma.user.upsert({
+      where: { email: u.email },
+      update: data,
+      create: { email: u.email, createdAt: u.createdAt, ...data },
+    });
+
+    userIds.push(row.id);
+  }
+
+  console.log(`Users:   ${userIds.length}`);
+  return userIds;
+}
+
+async function seedQuizzesAndQuestions(
+  userIds: string[],
+  imageIds: Map<string, string>,
+) {
+  const allQuizzes = Object.entries(SEED_QUIZZES).flatMap(([category, list]) =>
+    list.map((quiz) => ({ ...quiz, category })),
+  );
+
+  // Give each user a minimum number of quizzes, spread the rest randomly,
+  // then shuffle so the owners are mixed across categories.
+  const guaranteed = userIds.flatMap((id) =>
+    Array<string>(CONFIG.minQuizzesPerUser).fill(id),
+  );
+  const extra = Array.from(
+    { length: Math.max(0, allQuizzes.length - guaranteed.length) },
+    () => userIds[randInt(0, userIds.length - 1)],
+  );
+  const owners = shuffle([...guaranteed, ...extra]);
+
+  const quizzesPerUser = new Map<string, number>();
+  let questionTotal = 0;
+
+  for (const [index, quiz] of allQuizzes.entries()) {
+    const ownerId = owners[index];
+    const categoryImageId = imageIds.get(quiz.category);
+    if (!categoryImageId) {
+      throw new Error(`No image for category "${quiz.category}"`);
+    }
+
+    // Questions from the same category, matched to the quiz difficulty
+    const categoryPool = questionsForCategory(quiz.category);
+    const matching = categoryPool.filter((q) => q.level === quiz.difficulty);
+    const pool = matching.length >= CONFIG.questionsPerQuiz.min
+      ? matching
+      : categoryPool;
+
+    const count = Math.min(
+      pool.length,
+      randInt(CONFIG.questionsPerQuiz.min, CONFIG.questionsPerQuiz.max),
+    );
+    const chosen = shuffle(pool).slice(0, count);
+
+    const metrics = generateQuizMetrics();
+
+    const questionRows = chosen.map((q, i) => ({
+      type: q.type,
+      title: q.title,
+      explanation: q.explanation ?? null,
+      points: q.points,
+      timeLimitSeconds: q.timeLimitSeconds,
+      order: i + 1,
+      imageId: rand() < CONFIG.questionImageChance ? categoryImageId : null,
+      content: toJson(q.content),
+      createdAt: metrics.publishedAt,
+    }));
+
+    const totalPoints = chosen.reduce((sum, q) => sum + q.points, 0);
+    const durationSeconds = chosen.reduce((sum, q) => sum + q.timeLimitSeconds, 0);
+
+    const quizData = {
+      title: quiz.title,
+      description: quiz.description,
+      imageId: categoryImageId,
+      language: "en",
+      category: quiz.category,
+      tags: quiz.tags,
+      difficulty: quiz.difficulty as QuizDifficulty,
+      estimatedDurationSeconds: durationSeconds,
+      ownerId,
+      visibility: "PUBLIC" as const,
+      preferredVisibility: "PUBLIC" as const,
+      editorState: toJson(buildEditorState(quiz, chosen)),
+      questionCount: chosen.length,
+      totalPoints,
+      ...metrics,
+      createdAt: metrics.publishedAt,
+    };
+
+    await prisma.$transaction(async (tx) => {
+      const saved = await tx.quiz.upsert({
+        where: { slug: quiz.slug },
+        update: quizData,
+        create: { slug: quiz.slug, ...quizData },
+      });
+
+      // Replace the questions so re-running never duplicates them
+      await tx.question.deleteMany({ where: { quizId: saved.id } });
+      await tx.question.createMany({
+        data: questionRows.map((row) => ({ ...row, quizId: saved.id })),
+      });
+    });
+
+    quizzesPerUser.set(ownerId, (quizzesPerUser.get(ownerId) ?? 0) + 1);
+    questionTotal += chosen.length;
+  }
+
+  console.log(`Quizzes: ${allQuizzes.length}`);
+  console.log(`Questions: ${questionTotal}`);
+  console.log("Quizzes per user:");
+  for (const [i, id] of userIds.entries()) {
+    console.log(`  user-${i + 1}: ${quizzesPerUser.get(id) ?? 0}`);
+  }
+}
+
+async function main() {
+  const imageIds = await seedImages();
+  const userIds = await seedUsers(imageIds);
+  await seedQuizzesAndQuestions(userIds, imageIds);
+  console.log("Seeding finished.");
+}
+
+main()
+  .catch((error) => {
+    console.error("Seeding failed:", error);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

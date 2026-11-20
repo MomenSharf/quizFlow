@@ -99,7 +99,7 @@ export function QuizSearchInput({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
-          className="h-full min-w-0 flex-1 border-0 bg-transparent px-2 shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="h-full min-w-0 flex-1 border-0 bg-transparent dark:bg-transparent px-2 shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
 
         {query ? (

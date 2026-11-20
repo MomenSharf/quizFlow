@@ -5,6 +5,7 @@ import { ArrowRight, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { SearchForm } from "./search-form";
 
 type HeroAction = {
   label: string;
@@ -56,7 +57,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   return (
     <section className={cn("relative isolate overflow-hidden", className)}>
-      <div className="grid items-center gap-8 px-6 py-10 sm:px-10 sm:py-12 lg:min-h-97.5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-4 lg:px-12">
+      <div className="grid items-center gap-8 py-10 sm:py-12 lg:min-h-97.5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-4">
         {/* Content */}
         <div className="relative z-10 max-w-xl">
           {badge && (
@@ -77,29 +78,7 @@ export function HeroSection({
             {description}
           </p>
 
-          {search && (
-            <form
-              action={search.action ?? "/discover"}
-              method="GET"
-              className="mt-7 flex h-12 w-full max-w-xl items-center gap-3 rounded-xl border bg-background px-4 shadow-sm transition-colors focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10"
-            >
-              <Search className="size-4 shrink-0 text-muted-foreground" />
-
-              <Input
-                name={search.name ?? "q"}
-                placeholder={search.placeholder ?? "Search..."}
-                className="h-full min-w-0 flex-1 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
-              />
-
-              <Button
-                type="submit"
-                size="sm"
-                className="h-8 shrink-0 rounded-lg px-4"
-              >
-                {search.buttonLabel ?? "Search"}
-              </Button>
-            </form>
-          )}
+          {search && <SearchForm />}
 
           {/* Actions */}
           {!search && actions.length > 0 && (

@@ -15,7 +15,7 @@ export const discoverQuizSelect = {
   playCount: true,
   completionCount: true,
 
- 
+ isFeatured: true,
 
   publishedAt: true,
 
@@ -23,6 +23,7 @@ export const discoverQuizSelect = {
     select: {
       id: true,
       url: true,
+      alt:true
     },
   },
 
@@ -31,13 +32,14 @@ export const discoverQuizSelect = {
       id: true,
       name: true,
       image: true,
+      username: true
     },
   },
 } satisfies Prisma.QuizSelect;
 
 export const discoverQuizDetailedSelect = {
   ...discoverQuizSelect,
-
+  visibility: true,
   tags: true,
   totalPoints: true,
   viewCount: true,

@@ -1,4 +1,4 @@
-import type { Prisma, QuizAttemptStatus, Visibility } from "@/lib/db/generated/prisma/client";
+import type {  QuizAttemptStatus, Visibility } from "@/lib/db/generated/prisma/client";
 
 export type CollectionItem = {
   id: string;

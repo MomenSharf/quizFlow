@@ -4,7 +4,6 @@ import {
   BaseQuestionSchema,
   ContentSchema,
 } from "./base";
-import { MediaRatioSchema } from "../image";
 
 export const MatchPairSchema = z.object({
   id: z

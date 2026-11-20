@@ -1,11 +1,18 @@
+import { DiscoverSort } from "../../types/discover.types";
 
-export const DISCOVER_SORT_SECTIONS = [
+export const DISCOVER_SORT_SECTIONS: {
+  sort: DiscoverSort;
+  title: string;
+  description: string;
+  href: string;
+  color: string;
+  bgColor: string;
+}[] = [
   {
     sort: "POPULAR",
     title: "Popular",
     description: "Quizzes everyone is playing.",
     href: "/discover/search?sort=POPULAR",
-    icon: "popular",
     color: "text-orange-500",
     bgColor: "bg-orange-500/10",
   },
@@ -14,7 +21,6 @@ export const DISCOVER_SORT_SECTIONS = [
     title: "Trending",
     description: "See what's gaining attention.",
     href: "/discover/search?sort=TRENDING",
-    icon: "trending",
     color: "text-rose-500",
     bgColor: "bg-rose-500/10",
   },
@@ -23,7 +29,6 @@ export const DISCOVER_SORT_SECTIONS = [
     title: "Most completed",
     description: "Quizzes learners finish the most.",
     href: "/discover/search?sort=MOST_COMPLETED",
-    icon: "completed",
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
@@ -32,7 +37,6 @@ export const DISCOVER_SORT_SECTIONS = [
     title: "Most viewed",
     description: "Discover the most explored quizzes.",
     href: "/discover/search?sort=MOST_VIEWED",
-    icon: "viewed",
     color: "text-sky-500",
     bgColor: "bg-sky-500/10",
   },
@@ -41,7 +45,6 @@ export const DISCOVER_SORT_SECTIONS = [
     title: "Most liked",
     description: "Community favorites worth trying.",
     href: "/discover/search?sort=MOST_LIKED",
-    icon: "liked",
     color: "text-pink-500",
     bgColor: "bg-pink-500/10",
   },
@@ -50,8 +53,7 @@ export const DISCOVER_SORT_SECTIONS = [
     title: "Featured",
     description: "Handpicked quizzes to explore.",
     href: "/discover/search?sort=FEATURED",
-    icon: "featured",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
   },
-] as const;
+];

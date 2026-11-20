@@ -30,17 +30,13 @@ function getDiscoverOrderBy(
 
     case "FEATURED":
       return [{ featuredAt: "desc" }, { id: "desc" }];
-
-    case "NEWEST":
-    default:
-      return [{ publishedAt: "desc" }, { id: "desc" }];
   }
 }
 
 export const discoverService = {
   async getQuizzes<TSelect extends Prisma.QuizSelect>({
     select,
-    sort = "NEWEST",
+    sort = "POPULAR",
     take = 10,
     cursor,
     category,

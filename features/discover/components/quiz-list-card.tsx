@@ -148,7 +148,7 @@ export function QuizListCard({ quiz }: QuizListCardProps) {
           </div>
 
           <Link
-        href={`/discover/${quiz.slug ?? quiz.id}`}
+            href={`/discover/${quiz.slug ?? quiz.id}`}
             className="relative z-10 w-fit rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <h3 className="line-clamp-1 text-sm font-semibold tracking-tight transition-colors group-hover:text-primary sm:text-base">
@@ -181,8 +181,8 @@ export function QuizListCard({ quiz }: QuizListCardProps) {
         </div>
       </div>
 
-      <div className="relative z-10 flex shrink-0 items-center justify-between gap-3 border-t border-border/70 pt-3 sm:min-w-[170px] sm:flex-col sm:items-end sm:justify-center sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">
-        <div className="flex items-center gap-3">
+      <div className="relative z-10 flex shrink-0 items-center justify-between gap-3 border-t border-border/70 pt-3 sm:flex-col sm:items-end sm:justify-center sm:border-t-0 sm:pt-0">
+        <div className="flex items-center sm:w-full sm:justify-between gap-3">
           <div className="flex items-center gap-1.5" title="Total plays">
             <IconPlayerPlay size={15} className="text-sky-500" />
             <span className="text-xs font-semibold tabular-nums text-foreground">
@@ -206,7 +206,7 @@ export function QuizListCard({ quiz }: QuizListCardProps) {
           >
             {quiz.owner.image ? (
               <Image
-                src={quiz.owner.image}
+                src={quiz.owner.image.url}
                 alt={creatorName}
                 width={30}
                 height={30}
@@ -222,16 +222,11 @@ export function QuizListCard({ quiz }: QuizListCardProps) {
               <p className="max-w-28 truncate text-xs font-semibold text-foreground transition-colors hover:text-primary">
                 {creatorName}
               </p>
-              <p className="text-[10px] text-muted-foreground">Creator</p>
+              <p className="text-[10px] text-muted-foreground">
+                {quiz.owner.username ?? "Creater"}
+              </p>
             </div>
           </Link>
-
-          <div className="pointer-events-none hidden size-8 shrink-0 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition-all group-hover:border-primary/30 group-hover:bg-primary/5 group-hover:text-primary sm:flex">
-            <IconArrowUpRight
-              size={16}
-              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            />
-          </div>
         </div>
       </div>
     </article>

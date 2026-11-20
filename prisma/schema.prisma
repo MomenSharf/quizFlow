@@ -11,9 +11,13 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
+  username      String    @unique
   password      String?
   emailVerified DateTime?
-  image         String?
+  image         Image?    @relation(fields: [imageId], references: [id])
+  imageId       String?
+
+  bio String?
 
   accounts     Account[]
   sessions     Session[]
@@ -77,6 +81,7 @@ enum VerificationTokenType {
   PASSWORD_RESET
   EMAIL_VERIFICATION
 }
+
 enum QuizDifficulty {
   BEGINNER
   INTERMEDIATE
@@ -93,17 +98,17 @@ model Quiz {
   thumbnail Image?  @relation(fields: [imageId], references: [id])
   imageId   String?
 
-  language String  @default("en")
+  language String   @default("en")
   category String?
   tags     String[]
 
-  difficulty                QuizDifficulty @default(INTERMEDIATE)
-  estimatedDurationSeconds  Int?
+  difficulty               QuizDifficulty @default(INTERMEDIATE)
+  estimatedDurationSeconds Int?
 
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
-  visibility Visibility @default(PRIVATE)
+  visibility          Visibility @default(PRIVATE)
   preferredVisibility Visibility @default(PRIVATE)
 
   editorState Json
@@ -115,16 +120,15 @@ model Quiz {
   attempts  QuizAttempt[]
 
   // Engagement
-  playCount       Int      @default(0)
-  viewCount       Int      @default(0)
-  completionCount Int      @default(0)
-  likeCount       Int      @default(0)
-
+  playCount       Int @default(0)
+  viewCount       Int @default(0)
+  completionCount Int @default(0)
+  likeCount       Int @default(0)
 
   // Discovery
   trendingScore Float @default(0)
 
-  isFeatured Boolean  @default(false)
+  isFeatured Boolean   @default(false)
   featuredAt DateTime?
 
   lastPlayedAt DateTime?
@@ -144,7 +148,6 @@ model Quiz {
   @@index([difficulty, visibility, publishedAt])
   @@index([updatedAt])
 }
-
 
 model Question {
   id String @id @default(cuid())
@@ -292,7 +295,7 @@ model AttemptQuestion {
 
 model Image {
   id  String @id @default(cuid())
-  key String
+  key String @unique
 
   url String
 
@@ -306,6 +309,8 @@ model Image {
   questions            Question[]
   quizzes              Quiz[]
   explanationQuestions Question[] @relation("QuestionExplanationImage")
+
+  users User[]
 }
 
 enum QuizStatus {
@@ -353,3 +358,5 @@ enum QuestionType {
 
   DROPDOWN
 }
+
+
