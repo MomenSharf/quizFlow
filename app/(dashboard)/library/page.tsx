@@ -1,7 +1,7 @@
 import { auth } from "@/features/auth/lib/auth-options";
 import { redirect } from "next/navigation";
 
-import { demoQuizzes } from "@/lib/data/library-demo-data";
+
 import { LibraryPage } from "@/components/collection/library-page";
 import { getMyQuizzes } from "@/lib/actions/collection";
 

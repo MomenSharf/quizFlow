@@ -3,7 +3,6 @@ import { Suspense } from "react";
 
 import { QuizSearchFilters } from "@/features/discover/components/search/quiz-search-filters";
 import { QuizSearchResults } from "@/features/discover/components/search/quiz-search-results";
-import { MOCK_SEARCH_QUIZZES } from "../constants/mock-search-quizzes";
 import { DiscoverQuiz } from "../../constants/discover.select";
 
 

@@ -1,7 +1,5 @@
 import { getQuizDetails } from "@/features/discover/actions/get-quiz-details";
-import { mockQuizDetails } from "@/features/discover/components/constants/quiz-details.mock";
 import { QuizDetailsCard } from "@/features/discover/quiz-details/quiz-details-card";
-import { QuizQuestionsSection } from "@/features/discover/quiz-details/quiz-questions-section";
 import { notFound } from "next/navigation";
 
 interface QuizDetailsPageProps {

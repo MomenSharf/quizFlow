@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import { LearningPage } from "@/components/collection/learning-page";
 import { getMyAttempts } from "@/lib/actions/collection";
-import { demoAttempts } from "@/lib/data/learning-demo-data";
 
 export default async function Home() {
   const session = await auth();

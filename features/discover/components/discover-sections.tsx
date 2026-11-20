@@ -1,7 +1,6 @@
 import { DiscoverQuiz } from "../constants/discover.select";
 import { DiscoverSort } from "../types/discover.types";
 import { DISCOVER_SORT_SECTIONS } from "./constants/discover-sections";
-import { mockDiscoverCollections } from "./constants/discover.mock";
 import { DiscoverQuizSlider } from "./discover-quiz-slider";
 export type DiscoverPageSectionData = {
   sort: DiscoverSort;
