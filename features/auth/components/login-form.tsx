@@ -110,7 +110,7 @@ export function LoginForm() {
                     href={`/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ""}`}
                     className="text-[11px] font-medium text-primary hover:underline"
                   >
-                    Forgot?
+                    Forgot password ?
                   </Link>
                 </div>
 

@@ -116,7 +116,7 @@ export function UserButton({
         <DropdownMenuSeparator className="my-2" />
 
         <DropdownMenuItem
-          onSelect={() => signOut({ callbackUrl: "/" })}
+          onSelect={() => signOut({ callbackUrl: "/login" })}
           className="h-10 cursor-pointer gap-3 rounded-lg px-3 text-destructive focus:bg-destructive/10 focus:text-destructive"
         >
           <IconLogout size={18} stroke={1.8} />

@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/marketing/reveal";
 import { DiscoverQuiz } from "../constants/discover.select";
 import { DiscoverSort } from "../types/discover.types";
 import { DISCOVER_SORT_SECTIONS } from "./constants/discover-sections";
@@ -19,11 +20,9 @@ export function DiscoverSections({
         );
         if (!props) return null;
         return (
-          <DiscoverQuizSlider
-            key={section.sort}
-            {...props}
-            quizzes={section.quizzes}
-          />
+          <Reveal key={section.sort} delay={0.1} y={12}>
+            <DiscoverQuizSlider {...props} quizzes={section.quizzes} />
+          </Reveal>
         );
       })}
     </div>

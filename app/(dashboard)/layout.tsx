@@ -7,16 +7,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <div className="flex h-svh w-full overflow-hidden">
         <AppSidebar />
-
         <SidebarInset className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {/* Fixed header */}
           <Header />
 
           {/* Only this area scrolls */}
-<main className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-gradient-to-br from-primary/10 via-background to-violet-500/10">            {" "}
+          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-linear-to-br from-primary/10 via-background to-violet-500/10">
             {children}
           </main>
         </SidebarInset>
+        s
       </div>
     </SidebarProvider>
   );

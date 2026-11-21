@@ -1,9 +1,8 @@
+import { ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Search, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { SearchForm } from "./search-form";
 
@@ -78,7 +77,11 @@ export function HeroSection({
             {description}
           </p>
 
-          {search && <SearchForm />}
+          {search && (
+            <div className="mt-3">
+              <SearchForm />
+            </div>
+          )}
 
           {/* Actions */}
           {!search && actions.length > 0 && (

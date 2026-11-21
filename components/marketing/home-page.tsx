@@ -3,12 +3,17 @@ import { PaltformFeatures } from "./platforn-features";
 import { PlatfromStats } from "./platforn-stats";
 import { Reveal } from "./reveal";
 import { HeroSection } from "../shared/hero-section";
+import {
+  DiscoverPageSectionData,
+  DiscoverSections,
+} from "@/features/discover/components/discover-sections";
 
 type MarketingPageProps = {
   isAuthenticated: boolean;
+  sections: DiscoverPageSectionData[];
 };
 
-export function MarketingPage({ isAuthenticated }: MarketingPageProps) {
+export function HomePage({ isAuthenticated, sections }: MarketingPageProps) {
   return (
     <main className="relative min-h-screen overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
       {isAuthenticated ? (
@@ -59,6 +64,8 @@ export function MarketingPage({ isAuthenticated }: MarketingPageProps) {
       <Reveal delay={0.1}>
         <PaltformFeatures />
       </Reveal>
+
+      <DiscoverSections sections={sections} />
 
       <Reveal delay={0.1} y={12}>
         <Footer />
