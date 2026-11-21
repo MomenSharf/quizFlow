@@ -7,13 +7,13 @@ export default async function Settings() {
   const res = await getMe();
 
   if (res.error) {
-    throw new Error(res.error.message ?? "Failed to load account settings");
+   return 'error'
   }
 
   const user = res.data;
 
   if (!user) {
-    throw new Error("User not found");
+  return 'error'
   }
 
   return (
