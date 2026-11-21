@@ -148,7 +148,7 @@ export function QuizListCard({ quiz }: QuizListCardProps) {
           </div>
 
           <Link
-            href={`/discover/${quiz.slug ?? quiz.id}`}
+            href={`/discover/${quiz.id}`}
             className="relative z-10 w-fit rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <h3 className="line-clamp-1 text-sm font-semibold tracking-tight transition-colors group-hover:text-primary sm:text-base">

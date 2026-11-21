@@ -4,10 +4,7 @@ import { useRuntimeActions } from "@/features/quiz-runtime/store";
 import { cn } from "@/lib/utils";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  CheckCircle2,
-  ClockAlert,
-} from "lucide-react";
+import { CheckCircle2, ClockAlert } from "lucide-react";
 import { QuestionContentRouterProps } from "../question-content-router";
 
 export default function TrueFalseContent({
@@ -22,15 +19,8 @@ export default function TrueFalseContent({
 
   if (question.type !== "TRUE_FALSE") return null;
 
-  const selectedValue =
-    answer?.type === "TRUE_FALSE" ? answer.value : null;
-
-  const correctValue = question.content.correctAnswer;
-
-  const options = [
-    { value: true, label: "True", icon: IconCheck },
-    { value: false, label: "False", icon: IconX },
-  ];
+  const selectedValue = answer?.type === "TRUE_FALSE" ? answer.value : null;
+  const { correctAnswer } = question.content;
 
   const handleSelect = (value: boolean) => {
     if (isLocked || selectedValue === value) return;
@@ -41,49 +31,42 @@ export default function TrueFalseContent({
     });
   };
 
+  const choices = [
+    { value: true, label: "True" },
+    { value: false, label: "False" },
+  ];
+
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {options.map((option) => {
-        const selected = selectedValue === option.value;
+    <div className="grid gap-2.5 sm:grid-cols-2">
+      {choices.map(({ value, label }) => {
+        const selected = selectedValue === value;
+        const correct = isSubmitted && value === correctAnswer;
 
-        const correct =
-          isSubmitted && option.value === correctValue;
+        const incorrect = isSubmitted && !isTimeout && selected && !correct;
 
-        const incorrect =
-          isSubmitted && !isTimeout && selected && !correct;
-
-        const timedOutSelection =
-          isTimeout && selected && !correct;
+        const timedOutSelection = isTimeout && selected && !correct;
 
         return (
           <motion.button
-            key={String(option.value)}
+            key={label}
             type="button"
             disabled={isLocked}
-            onClick={() => handleSelect(option.value)}
+            onClick={() => handleSelect(value)}
             aria-pressed={selected}
             initial={false}
             animate={{
               scale: selected ? 1.015 : 1,
-              x:
-                incorrect && shouldAnimateFeedback
-                  ? [0, -5, 5, -3, 3, 0]
-                  : 0,
-              opacity:
-                isSubmitted && !correct && !selected ? 0.55 : 1,
+              x: incorrect && shouldAnimateFeedback ? [0, -5, 5, -3, 3, 0] : 0,
+              opacity: isSubmitted && !correct && !selected ? 0.55 : 1,
             }}
             transition={{
-              scale: {
-                type: "spring",
-                stiffness: 350,
-                damping: 24,
-              },
+              scale: { type: "spring", stiffness: 350, damping: 24 },
               x: { duration: 0.35, ease: "easeOut" },
               opacity: { duration: 0.3 },
             }}
             whileTap={!isLocked ? { scale: 0.985 } : undefined}
             className={cn(
-              "group relative flex min-h-28 flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border-2 p-4",
+              "group relative flex min-h-16 items-center gap-3 overflow-hidden rounded-xl border p-3 text-left",
               "transition-colors duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
               "disabled:cursor-not-allowed",
@@ -113,14 +96,12 @@ export default function TrueFalseContent({
               {correct && (
                 <motion.div
                   initial={
-                    shouldAnimateFeedback
-                      ? { scaleX: 0, opacity: 0 }
-                      : false
+                    shouldAnimateFeedback ? { scaleX: 0, opacity: 0 } : false
                   }
                   animate={{ scaleX: 1, opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="absolute inset-0 origin-left bg-emerald-500/[0.04]"
+                  className="absolute inset-y-0 left-0 w-full origin-left bg-emerald-500/[0.04]"
                 />
               )}
             </AnimatePresence>
@@ -136,7 +117,7 @@ export default function TrueFalseContent({
               }}
               transition={{ duration: 0.35 }}
               className={cn(
-                "relative z-10 flex size-11 items-center justify-center rounded-xl transition-colors",
+                "relative z-10 flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors",
 
                 correct && "bg-emerald-500 text-white",
 
@@ -163,38 +144,38 @@ export default function TrueFalseContent({
                   <motion.span
                     key="correct"
                     initial={
-                      shouldAnimateFeedback
-                        ? { scale: 0, rotate: -45 }
-                        : false
+                      shouldAnimateFeedback ? { scale: 0, rotate: -45 } : false
                     }
                     animate={{ scale: 1, rotate: 0 }}
                     exit={{ scale: 0 }}
                   >
-                    <IconCheck size={22} stroke={2.5} />
+                    <IconCheck size={18} stroke={2.5} />
                   </motion.span>
                 ) : incorrect ? (
                   <motion.span
                     key="incorrect"
                     initial={
-                      shouldAnimateFeedback
-                        ? { scale: 0, rotate: 45 }
-                        : false
+                      shouldAnimateFeedback ? { scale: 0, rotate: 45 } : false
                     }
                     animate={{ scale: 1, rotate: 0 }}
                     exit={{ scale: 0 }}
                   >
-                    <IconX size={22} stroke={2.5} />
+                    <IconX size={18} stroke={2.5} />
+                  </motion.span>
+                ) : value ? (
+                  <motion.span key="t">
+                    <IconCheck size={18} stroke={2.5} />
                   </motion.span>
                 ) : (
-                  <motion.span key="icon">
-                    <option.icon size={22} stroke={2} />
+                  <motion.span key="f">
+                    <IconX size={18} stroke={2.5} />
                   </motion.span>
                 )}
               </AnimatePresence>
             </motion.span>
 
-            <span className="relative z-10 text-base font-semibold">
-              {option.label}
+            <span className="relative z-10 flex-1 text-base font-semibold">
+              {label}
             </span>
 
             <AnimatePresence>
@@ -203,7 +184,7 @@ export default function TrueFalseContent({
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0, opacity: 0 }}
-                  className="absolute right-3 top-3 size-2 rounded-full bg-primary"
+                  className="relative z-10 size-2 shrink-0 rounded-full bg-primary"
                 />
               )}
 
@@ -216,7 +197,7 @@ export default function TrueFalseContent({
                   }
                   animate={{ scale: 1, opacity: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 350 }}
-                  className="absolute right-3 top-3 z-10"
+                  className="relative z-10"
                 >
                   <CheckCircle2 className="size-5 text-emerald-600" />
                 </motion.span>
@@ -226,7 +207,7 @@ export default function TrueFalseContent({
                 <motion.span
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="absolute right-3 top-3 z-10"
+                  className="relative z-10"
                 >
                   <ClockAlert className="size-5 text-amber-600" />
                 </motion.span>

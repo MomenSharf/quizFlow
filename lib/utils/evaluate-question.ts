@@ -1,5 +1,6 @@
 import { EvaluationResult } from "@/features/quiz-runtime/types/evaluation-types";
 import { RuntimeQuestion } from "@/features/quiz-runtime/types/runtime-types";
+import { matchesAcceptedAnswer } from "@/features/quiz-runtime/utils/type-answer";
 
 export function evaluateQuestion(
   runtimeQuestion: RuntimeQuestion,
@@ -106,6 +107,150 @@ export function evaluateQuestion(
 
       break;
     }
+
+    case "ORDERING": {
+      if (
+        !answer ||
+        answer.type !== "ORDERING" ||
+        answer.orderedOptionIds.length === 0
+      ) {
+        outcome = "UNANSWERED";
+        feedback = "No answer submitted.";
+        break;
+      }
+
+      // options array order === correct order
+      const correctOrder = question.content.options.map((option) => option.id);
+
+      const correctPositions = correctOrder.filter(
+        (id, index) => answer.orderedOptionIds[index] === id,
+      ).length;
+
+      isCorrect =
+        answer.orderedOptionIds.length === correctOrder.length &&
+        correctPositions === correctOrder.length;
+
+      earnedPoints = Math.round(
+        (correctPositions / correctOrder.length) * maxPoints,
+      );
+
+      outcome = isCorrect
+        ? "CORRECT"
+        : earnedPoints > 0
+          ? "PARTIALLY_CORRECT"
+          : "INCORRECT";
+
+      feedback =
+        runtimeQuestion.evaluation?.feedback ??
+        (isCorrect
+          ? "Excellent! You put everything in the right order."
+          : earnedPoints > 0
+            ? "Good effort! Some items are in the right place."
+            : "Not quite! Keep practicing and try again.");
+
+      break;
+    }
+
+    case "MATCH": {
+      if (!answer || answer.type !== "MATCH" || answer.selections.length === 0) {
+        outcome = "UNANSWERED";
+        feedback = "No answer submitted.";
+        break;
+      }
+
+      const pairs = question.content.pairs;
+
+      // a pair is correct when its left item is matched to its own right item
+      const correctCount = pairs.filter((pair) =>
+        answer.selections.some(
+          (m) => m.leftId === pair.id && m.rightId === pair.id,
+        ),
+      ).length;
+
+      isCorrect = correctCount === pairs.length;
+
+      earnedPoints = Math.round((correctCount / pairs.length) * maxPoints);
+
+      outcome = isCorrect
+        ? "CORRECT"
+        : earnedPoints > 0
+          ? "PARTIALLY_CORRECT"
+          : "INCORRECT";
+
+      feedback =
+        runtimeQuestion.evaluation?.feedback ??
+        (isCorrect
+          ? "Excellent! You matched every pair correctly."
+          : earnedPoints > 0
+            ? "Good effort! Some of your pairs are correct."
+            : "Not quite! Keep practicing and try again.");
+
+      break;
+    }
+
+    case "TYPE_ANSWER": {
+  if (
+    !answer ||
+    answer.type !== "TYPE_ANSWER" ||
+    answer.value.trim().length === 0
+  ) {
+    outcome = "UNANSWERED";
+    feedback = "No answer submitted.";
+    break;
+  }
+
+  isCorrect = matchesAcceptedAnswer(answer.value, question.content.answers);
+
+  earnedPoints = isCorrect ? maxPoints : 0;
+
+  outcome = isCorrect ? "CORRECT" : "INCORRECT";
+
+  feedback =
+    runtimeQuestion.evaluation?.feedback ??
+    (isCorrect
+      ? "Correct! Well done."
+      : "Not quite! Keep practicing and try again.");
+
+  break;
+}
+case "FILL_BLANK": {
+  const entries = answer?.type === "FILL_BLANK" ? answer.entries : null;
+  const blanks = question.content.blanks;
+
+  const values = new Map(
+    (entries ?? []).map((e) => [e.blankId, e.value]),
+  );
+
+  if (blanks.every((b) => !(values.get(b.id) ?? "").trim())) {
+    outcome = "UNANSWERED";
+    feedback = "No answer submitted.";
+    break;
+  }
+
+  const correctCount = blanks.filter((blank) =>
+    matchesAcceptedAnswer(values.get(blank.id) ?? "", blank.answers),
+  ).length;
+
+  isCorrect = correctCount === blanks.length;
+
+  earnedPoints = Math.round((correctCount / blanks.length) * maxPoints);
+
+  outcome = isCorrect
+    ? "CORRECT"
+    : earnedPoints > 0
+      ? "PARTIALLY_CORRECT"
+      : "INCORRECT";
+
+  feedback =
+    runtimeQuestion.evaluation?.feedback ??
+    (isCorrect
+      ? "Excellent! You filled in every blank correctly."
+      : earnedPoints > 0
+        ? "Good effort! Some of your blanks are correct."
+        : "Not quite! Keep practicing and try again.");
+
+  break;
+}
 
     default: {
       status = "NOT_GRADED";

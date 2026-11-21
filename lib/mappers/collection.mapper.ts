@@ -2,7 +2,7 @@ import type { CollectionItem } from "@/types/collection";
 import {
   QuizAttemptLibraryItem,
   QuizLibraryItem,
-} from "../services/quiz-service";
+} from "../services/quiz.service";
 
 export function mapQuizToCollectionItem(quiz: QuizLibraryItem): CollectionItem {
   return {
@@ -44,14 +44,14 @@ export function mapAttemptToCollectionItem(
 
     title: attempt.quiz.title,
     thumbnail: attempt.quiz.thumbnail,
-    
+
     status: attempt.status,
-    
+
     language: attempt.quiz.language,
     category: attempt.quiz.category,
     tags: attempt.quiz.tags,
     description: attempt.quiz.description,
-    
+
     questionCount: total,
 
     progress: {

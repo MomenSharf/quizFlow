@@ -14,7 +14,6 @@ export default async function Home() {
 
   const result = await getMyQuizzes();
 
-  console.log(result);
 
   if (result.error) {
     return "error";

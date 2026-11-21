@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo } from "react";
@@ -6,7 +5,7 @@ import { IconBook2 } from "@tabler/icons-react";
 
 import { CollectionPage } from "@/components/collection/collection-page";
 import { mapQuizToCollectionItem } from "@/lib/mappers/collection.mapper";
-import type { QuizLibraryItem } from "@/lib/services/quiz-service";
+import type { QuizLibraryItem } from "@/lib/services/quiz.service";
 
 import { QuizGrid } from "./quiz-grid";
 import { QuizTable } from "./quiz-table";
@@ -98,8 +97,7 @@ function LibraryEmptyState({
         }
       : {
           title: "No published quizzes yet",
-          description:
-            "Publish your quizzes and they will appear here.",
+          description: "Publish your quizzes and they will appear here.",
         };
 
   return (
@@ -152,12 +150,7 @@ export function LibraryPage({ quizzes }: LibraryPageProps) {
         });
 
         if (filteredQuizzes.length === 0) {
-          return (
-            <LibraryEmptyState
-              activeTab={activeTab}
-              search={search}
-            />
-          );
+          return <LibraryEmptyState activeTab={activeTab} search={search} />;
         }
 
         const items = filteredQuizzes.map(mapQuizToCollectionItem);

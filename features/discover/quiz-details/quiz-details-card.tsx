@@ -284,7 +284,7 @@ export function QuizDetailsCard({isOwner, quiz}: QuizDetailsCardProps) {
 
             <div className="flex w-full flex-wrap gap-2 sm:w-auto">
               <Button asChild className="flex-1 sm:flex-none">
-                <Link href={`/quizzes/${quiz.id}/play`}>
+                <Link href={`/quizzes/${quiz.id}/start-new`}>
                   <IconPlayerPlay className="mr-2 size-4" />
                   Play quiz
                 </Link>

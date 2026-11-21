@@ -31,7 +31,7 @@ function AnswerInput({
 
   const { field: textField } = useController({
     control,
-    name: `questions.${questionIndex}.content.options.${index}.text`,
+    name: `questions.${questionIndex}.content.answers.${index}.value`,
   });
 
   const fieldPath =

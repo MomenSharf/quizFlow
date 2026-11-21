@@ -261,42 +261,73 @@ export const quizRuntimeService = {
 
     return previewAttempt;
   },
-  async saveAttempt({ attempt, userId }: SaveAttemptInput) {
-    return prisma.$transaction(async (tx) => {
-      const existingAttempt = await tx.quizAttempt.findFirst({
-        where: {
-          id: attempt.id,
-          userId,
+async saveAttempt({ attempt, userId }: SaveAttemptInput) {
+  return prisma.$transaction(async (tx) => {
+    const existingAttempt = await tx.quizAttempt.findFirst({
+      where: {
+        id: attempt.id,
+        userId,
+      },
+      select: {
+        id: true,
+        quizId: true,
+        startedAt: true,
+        completedAt: true,
+      },
+    });
+
+    if (!existingAttempt) {
+      throw AppErrors.notFound("Quiz attempt not found");
+    }
+
+    const startedNow = !existingAttempt.startedAt && !!attempt.startedAt;
+
+    const completedNow =
+      !existingAttempt.completedAt && !!attempt.completedAt;
+
+    await tx.quizAttempt.update({
+      where: {
+        id: existingAttempt.id,
+      },
+      data: {
+        status: attempt.status,
+        currentQuestionIndex: attempt.currentQuestionIndex,
+        startedAt: attempt.startedAt,
+        lastActivityAt: attempt.lastActivityAt,
+        completedAt: attempt.completedAt,
+        expiresAt: attempt.expiresAt,
+
+        questions: {
+          update: attempt.questions.map((question) => ({
+            where: {
+              id: question.id,
+            },
+            data: {
+              status: question.status,
+              answer: question.answer ?? Prisma.DbNull,
+              evaluation: question.evaluation ?? Prisma.DbNull,
+              earnedPoints: question.earnedPoints,
+              flagged: question.flagged,
+              locked: question.locked,
+              visited: question.visited,
+              startedAt: question.startedAt,
+              deadlineAt: question.deadlineAt,
+              timeSpentSeconds: question.timeSpentSeconds ?? undefined,
+              answeredAt: question.answeredAt,
+              evaluatedAt: question.evaluatedAt,
+              hasSeenFeedback: question.hasSeenFeedback,
+            },
+          })),
         },
-        select: {
-          id: true,
-          quizId: true,
-          startedAt: true,
-          completedAt: true,
-        },
-      });
+      },
+    });
 
-      if (!existingAttempt) {
-        throw AppErrors.notFound("Quiz attempt not found");
-      }
-
-      const startedNow = !existingAttempt.startedAt && !!attempt.startedAt;
-
-      const completedNow =
-        !existingAttempt.completedAt && !!attempt.completedAt;
-
-      await tx.quizAttempt.update({
+    if (startedNow || completedNow) {
+      await tx.quiz.update({
         where: {
-          id: existingAttempt.id,
+          id: existingAttempt.quizId,
         },
         data: {
-          status: attempt.status,
-          currentQuestionIndex: attempt.currentQuestionIndex,
-          startedAt: attempt.startedAt,
-          lastActivityAt: attempt.lastActivityAt,
-          completedAt: attempt.completedAt,
-          expiresAt: attempt.expiresAt,
-
           ...(startedNow && {
             playCount: {
               increment: 1,
@@ -307,35 +338,13 @@ export const quizRuntimeService = {
               increment: 1,
             },
           }),
-
-          questions: {
-            update: attempt.questions.map((question) => ({
-              where: {
-                id: question.id,
-              },
-              data: {
-                status: question.status,
-                answer: question.answer ?? Prisma.DbNull,
-                evaluation: question.evaluation ?? Prisma.DbNull,
-                earnedPoints: question.earnedPoints,
-                flagged: question.flagged,
-                locked: question.locked,
-                visited: question.visited,
-                startedAt: question.startedAt,
-                deadlineAt: question.deadlineAt,
-                timeSpentSeconds: question.timeSpentSeconds ?? undefined,
-                answeredAt: question.answeredAt,
-                evaluatedAt: question.evaluatedAt,
-                hasSeenFeedback: question.hasSeenFeedback,
-              },
-            })),
-          },
         },
       });
+    }
 
-      return {
-        success: true,
-      };
-    });
-  },
+    return {
+      success: true,
+    };
+  });
+},
 };

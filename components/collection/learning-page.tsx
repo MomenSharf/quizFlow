@@ -7,7 +7,7 @@ import { QuizGrid } from "./quiz-grid";
 import { QuizTable } from "./quiz-table";
 
 import { mapAttemptToCollectionItem } from "@/lib/mappers/collection.mapper";
-import { QuizAttemptLibraryItem } from "@/lib/services/quiz-service";
+import { QuizAttemptLibraryItem } from "@/lib/services/quiz.service";
 import { IconBook } from "@tabler/icons-react";
 import { SearchForm } from "../shared/search-form";
 

@@ -1,4 +1,3 @@
-
 import bcrypt from "bcrypt";
 import { Prisma } from "../db/generated/prisma/client";
 import prisma from "../db/prisma";
@@ -10,6 +9,7 @@ import {
   ProfileSettingsInput,
   profileSettingsSchema,
 } from "../validation/settings.validation";
+import { discoverQuizSelect } from "@/features/discover/constants/discover.select";
 
 const userSettingsSelect = {
   id: true,
@@ -29,6 +29,29 @@ export const userService = {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: userSettingsSelect,
+    });
+
+    if (!user) {
+      throw AppErrors.notFound("User not found");
+    }
+
+    return user;
+  },
+
+  async getProfile(username: string) {
+    const user = await prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        image: true,
+        createdAt: true,
+        bio: true,
+        quizzes: {
+          select: discoverQuizSelect,
+        },
+      },
     });
 
     if (!user) {
@@ -67,9 +90,7 @@ export const userService = {
     }
 
     if (!user.password) {
-      throw AppErrors.badRequest(
-        "This account does not have a password set",
-      );
+      throw AppErrors.badRequest("This account does not have a password set");
     }
 
     const isPasswordValid = await bcrypt.compare(

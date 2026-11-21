@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/features/auth/lib/require-auth";
 import { tryCatchAsync } from "@/lib/utils/try-catch";
-import { collectionService } from "../services/quiz-service";
+import { collectionService } from "../services/quiz.service";
 
 export const getMyQuizzes = async () =>
   tryCatchAsync(async () => {

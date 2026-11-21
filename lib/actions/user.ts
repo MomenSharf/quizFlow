@@ -17,15 +17,20 @@ export const getMe = async () =>
     return await userService.getMe(user.id);
   });
 
+export const getProfile = async (username: string) =>
+  tryCatchAsync(async () => {
+    return await userService.getProfile(username);
+  });
+
 export const updateMe = async (input: ProfileSettingsInput) =>
   tryCatchAsync(async () => {
     const { user } = await requireAuth();
 
-    const res  = await userService.updateMe(user.id, input);
+    const res = await userService.updateMe(user.id, input);
 
-    revalidatePath('/settings')
+    revalidatePath("/settings");
 
-    return res
+    return res;
   });
 
 export const changePassword = async (input: PasswordSettingsInput) =>
