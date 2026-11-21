@@ -8,6 +8,7 @@ export const DISCOVER_SORT_SECTIONS: {
   color: string;
   bgColor: string;
 }[] = [
+  
   {
     sort: "POPULAR",
     title: "Popular",
